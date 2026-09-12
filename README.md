@@ -1,78 +1,70 @@
-# MyMonitorXX - Automated College Timetable & Live Campus Monitoring
+# MyMonitorXX - Campus Timetable & Live Monitoring Portal
 
-A modern web application delivering role-tailored experiences for **Admin**, **HOD**, and **Teacher** with unified real-time synchronization.
+Automated college timetable generator, departmental live attendance monitoring, and teacher check-in PWA with role-based authentication and hierarchical user provisioning.
 
 ---
 
-## 🌟 Roles & Features
+## 🔐 Authentication & Access Credentials
 
-### 👨💼 1. Admin (Master Timetable Controller)
-- **Role**: Controls college resources, timetable generation, and version releases. (Does not monitor live status).
-- **Sidebar**:
-  - `Dashboard`: System stats, active timetable version, workflow overview.
-  - `Teachers`: View faculty directory, workload limits, and **+ Add Teacher** modal.
-  - `Subjects`: Curriculum catalog with theory vs. practical lab hours.
-  - `Classes`: Student batches (IT-A, IT-B, IT-C, IT-D).
-  - `Classrooms`: Lecture halls & computer labs inventory.
-  - `Timetable`:
-    - **Generate Timetable Studio**: Specify teacher workload caps, lab continuous blocks, Friday policies, and run the automated constraint solver.
-    - **Current Timetable**: Weekly matrix grid for academic batches.
-    - **Drafts & History**: Version lifecycle management (v3.2 active, v3.1 archived).
-  - `Settings`: Academic term configuration.
-- **Workflow**:
+The login screen supports auto-role routing based on the registered Gmail address:
+
+| Role | Login Gmail | Password | Access Rights |
+|---|---|---|---|
+| **👨💼 Admin (Default)** | `canvaonly322@gmail.com`<br>*(also `canvaonly322@gmil.com`)* | `123BALASELVARAJA123` | Master control: Generates timetables, sets campus rules, **provisions HOD accounts with Gmail & password**. |
+| **👨🏫 HOD (IT Dept)** | `hod.it@college.edu` | `hodpassword123` | Department control: Live monitoring, vacant class substitution, **provisions Teacher accounts with Gmail & password**. |
+| **📱 Teacher (Arun)** | `arun@college.edu` | `teacherpass123` | Mobile PWA check-in: View daily schedule, 1-tap class check-in to activate live classroom status. |
+
+> **Tip**: The login page includes **1-Click Quick Login buttons** for instant testing without typing.
+
+---
+
+## 👑 Hierarchical User Provisioning
+
+1. **Admin adds HODs**:
+   - Go to Admin Panel $\rightarrow$ **Department Heads (HODs)** $\rightarrow$ Click **+ Add HOD**.
+   - Input Name, Department, Gmail Address, and set an Access Password.
+   - The HOD can immediately sign in using those credentials.
+
+2. **HOD adds Teachers**:
+   - Go to HOD Desk $\rightarrow$ **Department Teachers** $\rightarrow$ Click **+ Add Teacher**.
+   - Input Name, Subject, Department, Gmail Address, and set an Access Password.
+   - The teacher can immediately sign in using those credentials into their mobile PWA.
+
+---
+
+## 🌟 Portals & Workflow
+
+### 1. 👨💼 Admin Portal
+- **Main Workflow**:
   $$\text{Add College Data} \longrightarrow \text{Set Constraints} \longrightarrow \text{Generate Timetable} \longrightarrow \text{Review Conflicts} \longrightarrow \text{Apply Timetable} \longrightarrow \text{Manage Versions}$$
+- **Features**: Autonomous Timetable Generator with constraint solver simulation, Faculty Directory, HOD Provisioning, Room allocation, and Version history.
 
----
+### 2. 👨🏫 HOD Portal (Live Monitoring)
+- **Counters**: Today's Classes (48) • Active (32 🟢) • Scheduled (9 ⚪) • Vacant (5 🔴) • Substitute (2 🟡).
+- **Substitution Flow**:
+  $$\text{Live Status} \longrightarrow \text{Vacant Class Alert} \longrightarrow \text{Find Free Teacher} \longrightarrow \text{1-Click Assign Substitute}$$
 
-### 👨🏫 2. HOD (Department & Live Monitoring)
-- **Role**: Handles departmental operations, live classroom monitoring, and emergency substitute assignments.
-- **Dashboard Counters**:
-  - **Today's Classes**: 48
-  - **Active**: 32 (🟢 Live)
-  - **Scheduled**: 9 (⚪ Upcoming)
-  - **Vacant**: 5 (🔴 Immediate Attention)
-  - **Substitute**: 2 (🟡 Assigned)
-- **Live Monitoring Grid**:
-  - `CLASS` | `SUBJECT` | `TEACHER` | `ROOM` | `STATUS` | `ACTION`
-  - `IT-A` | Python | Arun | C204 | 🟢 ACTIVE
-  - `IT-B` | DBMS | Kumar | C205 | ⚪ SCHEDULED
-  - `IT-C` | Maths | Priya | C206 | 🔴 VACANT (1-click **Assign Substitute** modal)
-  - `IT-D` | Java | Suresh | C207 | 🟡 SUBSTITUTE (Assigned to Rajesh)
-- **HOD Substitution Flow**:
-  $$\text{See Live Status} \longrightarrow \text{See Vacant Class} \longrightarrow \text{Find Available Teacher} \longrightarrow \text{Assign Substitute}$$
-
----
-
-### 📱 3. Teacher (Mobile-First / PWA)
-- **Role**: Simple mobile-first interface optimized for smartphone use and PWA installation.
-- **Greeting**: "Good Morning, Arun 👋"
-- **NEXT CLASS Card**:
-  - Time: `10:00 - 11:00`
-  - Subject: `Python` (IT-A, Room C204)
-  - **[ CHECK IN ] Button**: Biometric check-in that activates the class live and syncs to the HOD monitoring board.
-- **Today's Schedule**:
+### 3. 📱 Teacher Portal (PWA)
+- **Greeting**: "Good Morning, Arun 👋" with campus WiFi geo-verification.
+- **NEXT CLASS Card**: 10:00 - 11:00 Python IT-A (Room C204) with **[ CHECK IN NOW ]** button.
+- **Schedule**:
   - `09:00` DBMS IT-A ✓ Completed
   - `10:00` Python IT-B 🟢 Active
   - `11:00` Maths IT-C Upcoming
   - `12:00` Lab IT-A Upcoming
-- **Navigation Bar**: Home, Today's Classes, My Timetable, Check-In, History.
 
 ---
 
 ## 🚀 How to Run
 
-### Option 1: Direct in Browser
-Simply double-click `index.html` or open it in your browser:
+### Direct in Browser (No Server Needed)
 ```bash
 open /Users/sairam/Documents/mymonıterxx/index.html
 ```
 
-### Option 2: Python Local Server
-Run with Python:
+### Via Local Python Server
 ```bash
 cd /Users/sairam/Documents/mymonıterxx
-python3 server.py
-# Or:
 python3 -m http.server 3000
 ```
-Then visit [http://localhost:3000](http://localhost:3000).
+Then visit **`http://localhost:3000`** in your browser.

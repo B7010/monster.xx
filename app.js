@@ -1,10 +1,47 @@
-// MyMonitorXX - Core Application Logic & State
+// MyMonitorXX - Core Application Logic, Authentication & RBAC
 
 // Initial State Data
 const DEFAULT_STATE = {
-  activeRole: 'hod', // 'admin', 'hod', 'teacher'
+  currentUser: null, // null = show login screen
+  activeRole: 'admin', // 'admin', 'hod', 'teacher'
   mobileFrame: false,
   teacherCheckedIn: false,
+
+  // User Accounts Directory (Authentication & RBAC)
+  users: [
+    {
+      id: 'usr-admin-1',
+      name: 'System Administrator',
+      email: 'canvaonly322@gmail.com',
+      altEmail: 'canvaonly322@gmil.com',
+      password: '123BALASELVARAJA123',
+      role: 'admin',
+      dept: 'Central Campus Administration'
+    },
+    {
+      id: 'usr-hod-1',
+      name: 'Dr. Ramesh Babu',
+      email: 'hod.it@college.edu',
+      password: 'hodpassword123',
+      role: 'hod',
+      dept: 'Information Technology'
+    },
+    {
+      id: 'usr-teacher-1',
+      name: 'Arun Kumar',
+      email: 'arun@college.edu',
+      password: 'teacherpass123',
+      role: 'teacher',
+      dept: 'Information Technology',
+      subject: 'Python'
+    }
+  ],
+
+  hodsList: [
+    { id: 1, name: 'Dr. Ramesh Babu', email: 'hod.it@college.edu', dept: 'Information Technology', roomsManaged: 'Block C (6 Halls)', assignedFaculty: 14, status: 'Active' },
+    { id: 2, name: 'Dr. Sunitha Verma', email: 'sunitha.hod@college.edu', dept: 'Computer Science', roomsManaged: 'Block B (8 Halls)', assignedFaculty: 18, status: 'Active' }
+  ],
+
   hodStats: {
     totalClasses: 48,
     active: 32,
@@ -12,6 +49,7 @@ const DEFAULT_STATE = {
     vacant: 5,
     substitute: 2
   },
+
   liveMonitoring: [
     { id: 1, class: 'IT-A', subject: 'Python', teacher: 'Arun', room: 'C204', status: 'ACTIVE', time: '10:00 - 11:00', substituteTeacher: null },
     { id: 2, class: 'IT-B', subject: 'DBMS', teacher: 'Kumar', room: 'C205', status: 'SCHEDULED', time: '11:00 - 12:00', substituteTeacher: null },
@@ -22,11 +60,13 @@ const DEFAULT_STATE = {
     { id: 7, class: 'IT-C', subject: 'Operating Systems', teacher: 'Kavitha', room: 'C209', status: 'ACTIVE', time: '10:00 - 11:00', substituteTeacher: null },
     { id: 8, class: 'IT-D', subject: 'Data Structures', teacher: 'Manoj', room: 'C210', status: 'VACANT', time: '10:00 - 11:00', substituteTeacher: null }
   ],
+
   availableSubstitutes: [
     { id: 'sub-1', name: 'Dr. Rajesh', dept: 'Information Technology', freePeriods: 'Period 3 & 4 (10:00 - 12:00)', specialization: 'Maths & Algorithms' },
     { id: 'sub-2', name: 'Prof. Anitha', dept: 'Information Technology', freePeriods: 'Period 3 (10:00 - 11:00)', specialization: 'Data Structures' },
     { id: 'sub-3', name: 'Dr. Meenakshi', dept: 'Computer Science', freePeriods: 'Period 3 & 5 (10:00 - 11:00, 1:00 - 2:00)', specialization: 'Programming Languages' }
   ],
+
   teachersList: [
     { id: 1, name: 'Arun Kumar', email: 'arun@college.edu', subject: 'Python & AI', dept: 'IT', workload: '16 hrs/wk', status: 'Available' },
     { id: 2, name: 'Kumar Swamy', email: 'kumar@college.edu', subject: 'DBMS', dept: 'IT', workload: '18 hrs/wk', status: 'In Class' },
@@ -35,6 +75,7 @@ const DEFAULT_STATE = {
     { id: 5, name: 'Sneha Rao', email: 'sneha@college.edu', subject: 'Web Tech', dept: 'IT', workload: '15 hrs/wk', status: 'Available' },
     { id: 6, name: 'Vikram Singh', email: 'vikram@college.edu', subject: 'Networks', dept: 'IT', workload: '18 hrs/wk', status: 'In Class' }
   ],
+
   subjectsList: [
     { code: 'IT301', name: 'Python Programming', type: 'Theory + Lab', weeklyHours: 5, dept: 'IT' },
     { code: 'IT302', name: 'Database Management Systems', type: 'Theory', weeklyHours: 4, dept: 'IT' },
@@ -42,6 +83,7 @@ const DEFAULT_STATE = {
     { code: 'IT303', name: 'Object Oriented Java', type: 'Theory + Lab', weeklyHours: 5, dept: 'IT' },
     { code: 'IT304', name: 'Computer Networks', type: 'Theory', weeklyHours: 4, dept: 'IT' }
   ],
+
   classroomsList: [
     { room: 'C204', type: 'Smart Lecture Hall', capacity: 65, block: 'Academic Block C' },
     { room: 'C205', type: 'Lecture Hall', capacity: 60, block: 'Academic Block C' },
@@ -50,11 +92,13 @@ const DEFAULT_STATE = {
     { room: 'Lab 1', type: 'Cloud & Web Lab', capacity: 45, block: 'IT Lab Complex' },
     { room: 'Lab 2', type: 'AI & Data Science Lab', capacity: 50, block: 'IT Lab Complex' }
   ],
+
   timetableVersions: [
     { version: 'v3.2', status: 'ACTIVE', term: 'Odd Semester 2026-27', appliedAt: '10 Sep 2026', generatedBy: 'AI Scheduler v2' },
     { version: 'v3.1', status: 'ARCHIVED', term: 'Odd Semester 2026-27', appliedAt: '01 Sep 2026', generatedBy: 'Admin Manual' },
     { version: 'v3.0', status: 'DRAFT', term: 'Odd Semester 2026-27', appliedAt: '25 Aug 2026', generatedBy: 'AI Scheduler v2' }
   ],
+
   teacherTodayClasses: [
     { time: '09:00', subject: 'DBMS', class: 'IT-A', room: 'C205', status: 'Completed', note: 'Attendance recorded' },
     { time: '10:00', subject: 'Python', class: 'IT-B', room: 'C204', status: 'Active', note: 'Live Class Slot' },
@@ -65,6 +109,14 @@ const DEFAULT_STATE = {
 
 // Load saved state or default
 let appState = JSON.parse(localStorage.getItem('mymoniter_state')) || DEFAULT_STATE;
+
+// Ensure default users and admin credentials always exist
+if (!appState.users || !appState.users.some(u => u.email === 'canvaonly322@gmail.com')) {
+  appState.users = DEFAULT_STATE.users;
+}
+if (!appState.hodsList) {
+  appState.hodsList = DEFAULT_STATE.hodsList;
+}
 
 function saveState() {
   localStorage.setItem('mymoniter_state', JSON.stringify(appState));
@@ -78,7 +130,7 @@ function showToast(message, type = 'success') {
   const bg = type === 'success' ? 'bg-emerald-600 text-white' : (type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-800 text-white');
   toast.className = `${bg} px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 z-50`;
   toast.innerHTML = `
-    <span class="text-lg">${type === 'success' ? '✓' : 'ℹ'}</span>
+    <span class="text-lg">${type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ')}</span>
     <span>${message}</span>
   `;
   container.appendChild(toast);
@@ -91,8 +143,134 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
-// Role Switching Logic
+// =========================================================================
+// AUTHENTICATION & LOGIN CONTROLLERS
+// =========================================================================
+
+function togglePasswordVisibility(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function handleLogin(e) {
+  if (e) e.preventDefault();
+  const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
+  const passwordInput = document.getElementById('login-password').value.trim();
+
+  if (!emailInput || !passwordInput) {
+    showToast('Please enter both Gmail address and password.', 'error');
+    return;
+  }
+
+  // Find user matching email or altEmail
+  const user = appState.users.find(u => 
+    u.email.toLowerCase() === emailInput || (u.altEmail && u.altEmail.toLowerCase() === emailInput)
+  );
+
+  if (!user) {
+    showToast('Account not found with this email. Check credentials or ask your Admin/HOD.', 'error');
+    return;
+  }
+
+  if (user.password !== passwordInput) {
+    showToast('Incorrect password. Please verify and try again.', 'error');
+    return;
+  }
+
+  // Authenticate user
+  appState.currentUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    dept: user.dept || 'Campus',
+    subject: user.subject || ''
+  };
+  appState.activeRole = user.role;
+  saveState();
+
+  updateAuthUI();
+  setRole(user.role);
+  showToast(`Welcome back, ${user.name}! Logged in as ${user.role.toUpperCase()}.`, 'success');
+}
+
+function quickLogin(role) {
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-password');
+
+  if (role === 'admin') {
+    emailInput.value = 'canvaonly322@gmail.com';
+    passInput.value = '123BALASELVARAJA123';
+  } else if (role === 'hod') {
+    emailInput.value = 'hod.it@college.edu';
+    passInput.value = 'hodpassword123';
+  } else if (role === 'teacher') {
+    emailInput.value = 'arun@college.edu';
+    passInput.value = 'teacherpass123';
+  }
+
+  handleLogin();
+}
+
+function handleLogout() {
+  appState.currentUser = null;
+  saveState();
+  updateAuthUI();
+  showToast('You have signed out successfully.', 'info');
+}
+
+function updateAuthUI() {
+  const loginSection = document.getElementById('section-login');
+  const roleSwitcher = document.getElementById('header-role-switcher');
+  const userProfileBar = document.getElementById('header-user-profile');
+  const clockContainer = document.getElementById('header-clock');
+
+  if (!appState.currentUser) {
+    // Show login section, hide app dashboards
+    if (loginSection) loginSection.classList.add('active');
+    document.querySelectorAll('.role-section:not(#section-login)').forEach(sec => sec.classList.remove('active'));
+    
+    if (roleSwitcher) roleSwitcher.classList.add('hidden');
+    if (userProfileBar) userProfileBar.classList.add('hidden');
+    return;
+  }
+
+  // User is logged in
+  if (loginSection) loginSection.classList.remove('active');
+  if (userProfileBar) userProfileBar.classList.remove('hidden');
+
+  // Populate User Profile in Header
+  const userNameEl = document.getElementById('header-user-name');
+  const userRoleEl = document.getElementById('header-user-role');
+  const userEmailEl = document.getElementById('header-user-email');
+  const userAvatarEl = document.getElementById('header-user-avatar');
+
+  if (userNameEl) userNameEl.textContent = appState.currentUser.name;
+  if (userRoleEl) userRoleEl.textContent = appState.currentUser.role.toUpperCase();
+  if (userEmailEl) userEmailEl.textContent = appState.currentUser.email;
+  if (userAvatarEl) userAvatarEl.textContent = appState.currentUser.name.charAt(0);
+
+  // Role Switcher visibility:
+  // Admin can view/switch between all 3 roles. HOD/Teachers can also navigate or view permitted panels.
+  if (roleSwitcher) {
+    roleSwitcher.classList.remove('hidden');
+  }
+
+  // Set active role view
+  setRole(appState.activeRole || appState.currentUser.role);
+}
+
+// =========================================================================
+// ROLE SWITCHER & NAVIGATION
+// =========================================================================
+
 function setRole(roleName) {
+  if (!appState.currentUser) {
+    updateAuthUI();
+    return;
+  }
+
   appState.activeRole = roleName;
   saveState();
 
@@ -101,9 +279,9 @@ function setRole(roleName) {
   buttons.forEach(btn => {
     const isTarget = btn.getAttribute('data-role') === roleName;
     if (isTarget) {
-      btn.className = 'role-pill-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm bg-indigo-600 text-white transition-all';
+      btn.className = 'role-pill-btn flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm bg-indigo-600 text-white transition-all';
     } else {
-      btn.className = 'role-pill-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all';
+      btn.className = 'role-pill-btn flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all';
     }
   });
 
@@ -123,13 +301,18 @@ function setRole(roleName) {
     frameToggleBtn.style.display = roleName === 'teacher' ? 'inline-flex' : 'none';
   }
 
+  // Close any open drawers when changing role
+  closeAdminDrawer();
+  closeHodDrawer();
+  closeTeacherDrawer();
+
   renderActiveViews();
 }
 
-// Sub-Tab Navigation for Admin & HOD
+// Sub-Tab Navigation for Admin (Supports Desktop Sidebar and Mobile Drawer)
 function switchAdminTab(tabId) {
   document.querySelectorAll('.admin-tab-pane').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.admin-sidebar-link').forEach(el => {
+  document.querySelectorAll('.admin-sidebar-link, .admin-drawer-link').forEach(el => {
     el.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-semibold');
     el.classList.add('text-slate-600', 'hover:bg-slate-50');
   });
@@ -137,16 +320,34 @@ function switchAdminTab(tabId) {
   const targetPane = document.getElementById(`admin-tab-${tabId}`);
   if (targetPane) targetPane.classList.remove('hidden');
 
-  const activeLink = document.querySelector(`[data-admin-tab="${tabId}"]`);
-  if (activeLink) {
+  document.querySelectorAll(`[data-admin-tab="${tabId}"]`).forEach(activeLink => {
     activeLink.classList.add('bg-indigo-50', 'text-indigo-700', 'font-semibold');
     activeLink.classList.remove('text-slate-600');
+  });
+
+  closeAdminDrawer();
+}
+
+// Drawer Controls for Administrator Panel Mobile View
+function toggleAdminDrawer(force) {
+  const drawer = document.getElementById('admin-mobile-drawer');
+  if (!drawer) return;
+  if (typeof force === 'boolean') {
+    if (force) drawer.classList.remove('drawer-closed');
+    else drawer.classList.add('drawer-closed');
+  } else {
+    drawer.classList.toggle('drawer-closed');
   }
 }
 
+function closeAdminDrawer() {
+  toggleAdminDrawer(false);
+}
+
+// Sub-Tab Navigation for HOD (Supports Desktop Sidebar and Mobile Drawer)
 function switchHodTab(tabId) {
   document.querySelectorAll('.hod-tab-pane').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.hod-sidebar-link').forEach(el => {
+  document.querySelectorAll('.hod-sidebar-link, .hod-drawer-link').forEach(el => {
     el.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-semibold');
     el.classList.add('text-slate-600', 'hover:bg-slate-50');
   });
@@ -154,33 +355,185 @@ function switchHodTab(tabId) {
   const targetPane = document.getElementById(`hod-tab-${tabId}`);
   if (targetPane) targetPane.classList.remove('hidden');
 
-  const activeLink = document.querySelector(`[data-hod-tab="${tabId}"]`);
-  if (activeLink) {
+  document.querySelectorAll(`[data-hod-tab="${tabId}"]`).forEach(activeLink => {
     activeLink.classList.add('bg-indigo-50', 'text-indigo-700', 'font-semibold');
     activeLink.classList.remove('text-slate-600');
+  });
+
+  closeHodDrawer();
+}
+
+// Drawer Controls for HOD IT Department Mobile View
+function toggleHodDrawer(force) {
+  const drawer = document.getElementById('hod-mobile-drawer');
+  if (!drawer) return;
+  if (typeof force === 'boolean') {
+    if (force) drawer.classList.remove('drawer-closed');
+    else drawer.classList.add('drawer-closed');
+  } else {
+    drawer.classList.toggle('drawer-closed');
   }
 }
 
+function closeHodDrawer() {
+  toggleHodDrawer(false);
+}
+
+// Drawer Controls for Teacher Mobile View
+function toggleTeacherDrawer(force) {
+  const drawer = document.getElementById('teacher-mobile-drawer');
+  if (!drawer) return;
+  if (typeof force === 'boolean') {
+    if (force) drawer.classList.remove('drawer-closed');
+    else drawer.classList.add('drawer-closed');
+  } else {
+    drawer.classList.toggle('drawer-closed');
+  }
+}
+
+function closeTeacherDrawer() {
+  toggleTeacherDrawer(false);
+}
+
+// Sub-Tab Navigation for Teacher (Supports Desktop Sidebar, Mobile Drawer, and Tabs)
 function switchTeacherTab(tabId) {
   document.querySelectorAll('.teacher-tab-pane').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.teacher-nav-link').forEach(el => {
-    el.classList.remove('text-indigo-600', 'font-bold');
-    el.classList.add('text-slate-500');
+  
+  // Highlight active link across desktop sidebar, drawer, and bottom nav
+  document.querySelectorAll('[data-teacher-tab]').forEach(el => {
+    const isTarget = el.getAttribute('data-teacher-tab') === tabId;
+    if (el.classList.contains('teacher-sidebar-link') || el.classList.contains('teacher-drawer-link')) {
+      if (isTarget) {
+        el.classList.add('bg-indigo-50', 'text-indigo-700', 'font-semibold');
+        el.classList.remove('text-slate-600');
+      } else {
+        el.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-semibold');
+        el.classList.add('text-slate-600');
+      }
+    } else {
+      if (isTarget) {
+        el.classList.add('text-indigo-600', 'font-bold');
+        el.classList.remove('text-slate-500');
+      } else {
+        el.classList.remove('text-indigo-600', 'font-bold');
+        el.classList.add('text-slate-500');
+      }
+    }
   });
 
   const targetPane = document.getElementById(`teacher-tab-${tabId}`);
   if (targetPane) targetPane.classList.remove('hidden');
 
-  const activeLink = document.querySelector(`[data-teacher-tab="${tabId}"]`);
-  if (activeLink) {
-    activeLink.classList.add('text-indigo-600', 'font-bold');
-    activeLink.classList.remove('text-slate-500');
-  }
+  closeTeacherDrawer();
 }
 
-// Render Functions
+// =========================================================================
+// HIERARCHICAL USER CREATION (ADMIN ADDS HOD, HOD ADDS TEACHERS)
+// =========================================================================
+
+// 1. Admin adds an HOD with Gmail & Password
+function handleAddHod(e) {
+  e.preventDefault();
+  const name = document.getElementById('new-hod-name').value.trim();
+  const dept = document.getElementById('new-hod-dept').value.trim();
+  const email = document.getElementById('new-hod-email').value.trim().toLowerCase();
+  const password = document.getElementById('new-hod-password').value.trim();
+  const rooms = document.getElementById('new-hod-rooms').value.trim() || 'Assigned Block';
+
+  if (!name || !email || !password) {
+    showToast('Name, Gmail, and Password are required.', 'error');
+    return;
+  }
+
+  // Check if user already exists
+  if (appState.users.some(u => u.email.toLowerCase() === email)) {
+    showToast('A user with this Gmail already exists.', 'error');
+    return;
+  }
+
+  // Add HOD account to users
+  appState.users.push({
+    id: 'usr-hod-' + Date.now(),
+    name,
+    email,
+    password,
+    role: 'hod',
+    dept
+  });
+
+  // Add to HOD list
+  appState.hodsList.push({
+    id: Date.now(),
+    name,
+    email,
+    dept,
+    roomsManaged: rooms,
+    assignedFaculty: 10,
+    status: 'Active'
+  });
+
+  saveState();
+  renderAdminTables();
+  closeModal('modal-add-hod');
+  showToast(`HOD account for ${name} created! Password set. HOD can now log in with ${email}.`, 'success');
+  e.target.reset();
+}
+
+// 2. HOD adds a Teacher with Gmail & Password
+function handleHodAddTeacher(e) {
+  e.preventDefault();
+  const name = document.getElementById('hod-teacher-name').value.trim();
+  const email = document.getElementById('hod-teacher-email').value.trim().toLowerCase();
+  const subject = document.getElementById('hod-teacher-subject').value.trim();
+  const dept = document.getElementById('hod-teacher-dept').value.trim() || 'IT';
+  const password = document.getElementById('hod-teacher-password').value.trim();
+  const workload = document.getElementById('hod-teacher-workload').value.trim() || '16 hrs/wk';
+
+  if (!name || !email || !password || !subject) {
+    showToast('Name, Subject, Gmail, and Password are required.', 'error');
+    return;
+  }
+
+  if (appState.users.some(u => u.email.toLowerCase() === email)) {
+    showToast('A user with this Gmail already exists.', 'error');
+    return;
+  }
+
+  // Add Teacher account to users
+  appState.users.push({
+    id: 'usr-teacher-' + Date.now(),
+    name,
+    email,
+    password,
+    role: 'teacher',
+    dept,
+    subject
+  });
+
+  // Add to teachers list
+  appState.teachersList.push({
+    id: Date.now(),
+    name,
+    email,
+    subject,
+    dept,
+    workload,
+    status: 'Available'
+  });
+
+  saveState();
+  renderAdminTables();
+  renderHodTeachers();
+  closeModal('modal-hod-add-teacher');
+  showToast(`Teacher account for ${name} created! Teacher can now log in with ${email}.`, 'success');
+  e.target.reset();
+}
+
+// =========================================================================
+// HOD DASHBOARD & LIVE MONITORING
+// =========================================================================
+
 function renderHodDashboard() {
-  // Update stats counters
   document.getElementById('hod-stat-total').textContent = appState.hodStats.totalClasses;
   document.getElementById('hod-stat-active').textContent = appState.hodStats.active;
   document.getElementById('hod-stat-scheduled').textContent = appState.hodStats.scheduled;
@@ -321,7 +674,10 @@ function confirmSubstituteAssignment(teacherName) {
   }
 }
 
-// Teacher Check-In Simulation
+// =========================================================================
+// TEACHER DASHBOARD & CHECK-IN
+// =========================================================================
+
 function handleTeacherCheckIn() {
   appState.teacherCheckedIn = !appState.teacherCheckedIn;
 
@@ -350,24 +706,26 @@ function renderTeacherDashboard() {
   const nextClassBadge = document.getElementById('teacher-next-class-badge');
   const checkinTimeText = document.getElementById('teacher-checkin-time');
 
-  if (appState.teacherCheckedIn) {
-    checkInBtn.className = 'w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2 transform active:scale-95';
-    checkInBtn.innerHTML = `
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-      <span>CHECKED IN • IN PROGRESS</span>
-    `;
-    nextClassBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white flex items-center gap-1.5';
-    nextClassBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-white animate-pulse-dot"></span> LIVE CLASS';
-    checkinTimeText.textContent = 'Geo-verified at C204 • Attendance mode open';
-  } else {
-    checkInBtn.className = 'w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 transform active:scale-95';
-    checkInBtn.innerHTML = `
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004 11a7.96 7.96 0 004.28 7.05"/></svg>
-      <span>CHECK IN NOW</span>
-    `;
-    nextClassBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-indigo-500 text-white flex items-center gap-1.5';
-    nextClassBadge.innerHTML = 'UPCOMING (10:00 AM)';
-    checkinTimeText.textContent = 'Tap to check-in when entering Room C204';
+  if (checkInBtn && nextClassBadge && checkinTimeText) {
+    if (appState.teacherCheckedIn) {
+      checkInBtn.className = 'w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2 transform active:scale-95';
+      checkInBtn.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        <span>CHECKED IN • IN PROGRESS</span>
+      `;
+      nextClassBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white flex items-center gap-1.5';
+      nextClassBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-white animate-pulse-dot"></span> LIVE CLASS';
+      checkinTimeText.textContent = 'Geo-verified at C204 • Attendance mode open';
+    } else {
+      checkInBtn.className = 'w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 transform active:scale-95';
+      checkInBtn.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004 11a7.96 7.96 0 004.28 7.05"/></svg>
+        <span>CHECK IN NOW</span>
+      `;
+      nextClassBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-indigo-500 text-white flex items-center gap-1.5';
+      nextClassBadge.innerHTML = 'UPCOMING (10:00 AM)';
+      checkinTimeText.textContent = 'Tap to check-in when entering Room C204';
+    }
   }
 
   // Render teacher daily timeline
@@ -403,7 +761,10 @@ function renderTeacherDashboard() {
   }
 }
 
-// Admin Timetable Generator Simulation
+// =========================================================================
+// ADMIN TIMETABLE GENERATOR & MANAGEMENT
+// =========================================================================
+
 function runTimetableGeneration() {
   const btn = document.getElementById('btn-run-generator');
   const progressContainer = document.getElementById('gen-progress-container');
@@ -458,8 +819,30 @@ function applyGeneratedTimetable() {
   showToast('Timetable v3.3 applied campus-wide! HODs and Teachers notified.', 'success');
 }
 
-// Render Admin Tables (Teachers, Subjects, Classrooms, Versions)
+// Render Admin Tables (HODs, Teachers, Versions)
 function renderAdminTables() {
+  // HODs Table
+  const hodTable = document.getElementById('admin-hods-tbody');
+  if (hodTable) {
+    hodTable.innerHTML = '';
+    appState.hodsList.forEach(h => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-slate-100 hover:bg-slate-50/80 text-sm';
+      tr.innerHTML = `
+        <td class="py-3 px-4 font-bold text-slate-800">${h.name}</td>
+        <td class="py-3 px-4 font-mono text-xs text-indigo-600 font-semibold">${h.email}</td>
+        <td class="py-3 px-4 text-slate-700 font-medium">${h.dept}</td>
+        <td class="py-3 px-4 text-slate-500">${h.roomsManaged}</td>
+        <td class="py-3 px-4">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+            ${h.status}
+          </span>
+        </td>
+      `;
+      hodTable.appendChild(tr);
+    });
+  }
+
   // Teachers Table
   const tTable = document.getElementById('admin-teachers-tbody');
   if (tTable) {
@@ -506,7 +889,27 @@ function renderAdminTables() {
   }
 }
 
-// Modal handling for Add Teacher, Subject, Classroom
+function renderHodTeachers() {
+  const container = document.getElementById('hod-teachers-cards-container');
+  if (!container) return;
+  container.innerHTML = '';
+  appState.teachersList.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs';
+    card.innerHTML = `
+      <div>
+        <span class="font-bold text-slate-800 text-sm">${t.name}</span>
+        <p class="text-slate-500">${t.subject} • <span class="font-mono text-indigo-600">${t.email}</span></p>
+      </div>
+      <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${t.status === 'Available' ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">
+        ${t.status}
+      </span>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Modal handling
 function openModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) modal.classList.remove('hidden');
@@ -517,61 +920,7 @@ function closeModal(modalId) {
   if (modal) modal.classList.add('hidden');
 }
 
-function handleAddTeacher(e) {
-  e.preventDefault();
-  const name = document.getElementById('new-teacher-name').value.trim();
-  const email = document.getElementById('new-teacher-email').value.trim();
-  const subject = document.getElementById('new-teacher-subject').value.trim();
-  const dept = document.getElementById('new-teacher-dept').value.trim();
-  const workload = document.getElementById('new-teacher-workload').value.trim() || '16 hrs/wk';
-
-  if (!name || !subject) return;
-
-  appState.teachersList.push({
-    id: Date.now(),
-    name,
-    email: email || `${name.toLowerCase().replace(/\s+/g, '.')}@college.edu`,
-    subject,
-    dept: dept || 'IT',
-    workload,
-    status: 'Available'
-  });
-
-  saveState();
-  renderAdminTables();
-  closeModal('modal-add-teacher');
-  showToast(`Teacher ${name} added successfully!`, 'success');
-  e.target.reset();
-}
-
-// Phone Mockup Toggle for Teacher View
-function toggleMobileFrame() {
-  appState.mobileFrame = !appState.mobileFrame;
-  saveState();
-  applyMobileFrameStyle();
-}
-
-function applyMobileFrameStyle() {
-  const container = document.getElementById('teacher-container');
-  const btn = document.getElementById('teacher-frame-toggle');
-  if (!container || !btn) return;
-
-  if (appState.mobileFrame) {
-    container.className = 'phone-mockup shadow-2xl';
-    btn.innerHTML = `
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-      <span>Switch to Full Width</span>
-    `;
-  } else {
-    container.className = 'w-full max-w-xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden';
-    btn.innerHTML = `
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-      <span>Preview in Phone Frame</span>
-    `;
-  }
-}
-
-// Clock updates
+// Live Clock updates
 function startClock() {
   function update() {
     const clockEl = document.getElementById('live-clock');
@@ -592,28 +941,41 @@ function renderActiveViews() {
   renderHodDashboard();
   renderTeacherDashboard();
   renderAdminTables();
-  applyMobileFrameStyle();
+  renderHodTeachers();
 }
 
 // Reset data to defaults
 function resetAllData() {
-  if (confirm('Reset application data to initial demo state?')) {
+  if (confirm('Reset application data to default administrator state?')) {
     localStorage.removeItem('mymoniter_state');
     appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
     saveState();
+    updateAuthUI();
     renderActiveViews();
-    showToast('Reset data to initial demonstration state.', 'info');
+    showToast('Reset data to default state.', 'info');
   }
 }
 
 // Initialization on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   startClock();
-  setRole(appState.activeRole || 'hod');
+  updateAuthUI();
 
-  // Event listener for add teacher form
-  const teacherForm = document.getElementById('form-add-teacher');
-  if (teacherForm) {
-    teacherForm.addEventListener('submit', handleAddTeacher);
+  // Event listener for login form
+  const loginForm = document.getElementById('form-login');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+
+  // Event listener for Add HOD form
+  const hodForm = document.getElementById('form-add-hod');
+  if (hodForm) {
+    hodForm.addEventListener('submit', handleAddHod);
+  }
+
+  // Event listener for HOD Add Teacher form
+  const hodTeacherForm = document.getElementById('form-hod-add-teacher');
+  if (hodTeacherForm) {
+    hodTeacherForm.addEventListener('submit', handleHodAddTeacher);
   }
 });
