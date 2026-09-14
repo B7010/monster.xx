@@ -144,6 +144,7 @@ class HTMLExporter:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <link rel="icon" type="image/png" href="logo.png">
+<script src="logo.js"></script>
 <title>{institution} - {doc_title}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -497,7 +498,7 @@ class HTMLExporter:
 
 <div class="action-bar no-print">
   <div class="action-info" style="display: flex; align-items: center; gap: 8px;">
-    <img src="logo.png" alt="Logo" style="width: 26px; height: 26px; border-radius: 50%; background: #ffffff; padding: 1px; object-fit: contain;">
+    <img src="logo.png" alt="Logo" style="width: 26px; height: 26px; border-radius: 50%; background: #ffffff; padding: 1px; object-fit: contain;" onerror="this.onerror=null;if(window.FOLIO_LOGO_DATA_URL)this.src=window.FOLIO_LOGO_DATA_URL;">
     <span class="badge-vector">Vector Document</span>
     <span class="action-title">{institution} &bull; {doc_title}</span>
     <span style="font-size: 11px; color: #cbd5e1; margin-left: 8px; font-weight: 500;">&bull; Developed By Aathithya A (IT DEPT)</span>
