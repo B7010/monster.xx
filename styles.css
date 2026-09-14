@@ -59,12 +59,16 @@ body {
 
 /* Smooth view transitions */
 .role-section {
-  display: none;
+  display: none !important;
   animation: fadeIn 0.2s ease-in-out;
 }
 
 .role-section.active {
-  display: block;
+  display: block !important;
+}
+
+.role-section.active.login-screen-canvas {
+  display: flex !important;
 }
 
 @keyframes fadeIn {
@@ -84,4 +88,247 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Modern Segmented Control & Tokens */
+.role-segmented-tab {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.role-segmented-tab.active {
+  background-color: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
+.checklist-step-complete {
+  border-color: rgba(16, 185, 129, 0.3);
+  background-color: rgba(16, 185, 129, 0.04);
+}
+
+/* ========================================================================= */
+/* CAMPUS DASHBOARDS - HIGH-RESOLUTION FULL-SCREEN THEME BACKGROUND */
+/* ========================================================================= */
+html {
+  min-height: 100%;
+  background-color: #071724;
+}
+
+body:not(.login-mode) {
+  background-color: #071724 !important;
+  background-image: url('dashboard-circuit-bg.png?v=20260914') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  min-height: 100vh;
+  width: 100%;
+}
+
+#section-admin,
+#section-hod,
+#section-teacher {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 3.5rem;
+}
+
+/* Translucent Frosted Glass Header - Allows background to extend 100% full screen */
+body:not(.login-mode) header {
+  background-color: rgba(7, 23, 36, 0.72) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+}
+
+body:not(.login-mode) header #header-brand .text-slate-900 {
+  color: #ffffff !important;
+}
+
+body:not(.login-mode) header #header-brand .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+body:not(.login-mode) header #header-clock {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #cbd5e1 !important;
+}
+
+body:not(.login-mode) header #header-user-name {
+  color: #ffffff !important;
+}
+
+body:not(.login-mode) header #header-user-email {
+  color: #94a3b8 !important;
+}
+
+body:not(.login-mode) header #header-user-profile {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body:not(.login-mode) header #header-user-profile button {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+}
+
+body:not(.login-mode) header #header-user-profile button:hover {
+  background-color: rgba(225, 29, 72, 0.25) !important;
+  color: #fda4af !important;
+}
+
+body:not(.login-mode) #header-role-switcher {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body:not(.login-mode) .role-segmented-tab:not(.active) {
+  color: #cbd5e1 !important;
+}
+
+body:not(.login-mode) .role-segmented-tab:not(.active):hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body:not(.login-mode) .role-segmented-tab.active {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body:not(.login-mode) aside.bg-white {
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================================================= */
+/* PREMIUM LOGIN BACKGROUND & STYLING */
+/* ========================================================================= */
+body.login-mode {
+  background-color: #020617;
+  color: #f1f5f9;
+}
+
+body.login-mode header {
+  background-color: rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.login-mode header .text-slate-900 {
+  color: #f8fafc;
+}
+
+body.login-mode header .text-slate-500 {
+  color: #94a3b8;
+}
+
+body.login-mode header .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #c7d2fe;
+}
+
+/* Position FOLIO logo, brand text and control buttons in the top left corner across all screens */
+#header-nav-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.login-mode #header-right-controls {
+  display: none !important;
+}
+
+.login-screen-canvas {
+  position: relative;
+  min-height: calc(100vh - 65px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background-color: #020617;
+  background-image: 
+    linear-gradient(135deg, rgba(2, 6, 23, 0.3) 0%, rgba(2, 6, 23, 0.1) 100%),
+    url('login-bg.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+/* Floating ambient glowing orbs */
+@keyframes float-slow-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, -20px) scale(1.05); }
+}
+
+@keyframes float-slow-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 15px) scale(1.04); }
+}
+
+.animate-float-1 {
+  animation: float-slow-1 10s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-slow-2 12s ease-in-out infinite;
+}
+
+/* Glassmorphic Login Card - Eye-comfort sleek dark glass */
+.login-card-glass {
+  background: rgba(10, 15, 29, 0.78);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 30px 60px -15px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 50px rgba(99, 102, 241, 0.15);
+}
+
+/* ========================================================================= */
+/* AI TIMETABLE AGENT & STUDIO ENHANCEMENTS */
+/* ========================================================================= */
+.swap-card-active {
+  ring: 2px solid #f59e0b !important;
+  background-color: #fffbeb !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35) !important;
+  animation: swap-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes swap-glow {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+.lab-block-gradient {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+}
+
+.day-filter-btn.active {
+  background-color: #ffffff;
+  color: #4f46e5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 700;
 }

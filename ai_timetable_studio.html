@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI Timetable Scheduler - Mobile</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="logo.png">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #071724;
+      background-image: url('dashboard-bg.png');
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    /* Drag & Drop Visual Styles */
+    .dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+    .drag-over {
+      border: 2px dashed #2563eb !important;
+      background-color: #eff6ff !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen flex justify-center selection:bg-brand-500 selection:text-white">
+
+  <!-- Mobile App Container (Max-W-MD for perfect phone layout) -->
+  <div class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-xl relative pb-24">
+
+    <!-- Header Banner with SCAD College Logo -->
+    <header class="bg-slate-900 text-white px-4 pt-3.5 pb-3 sticky top-0 z-30 shadow-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="logo.png" alt="SCAD Logo" class="w-10 h-10 rounded-full bg-white p-0.5 shadow-sm border border-amber-400/80 object-contain">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <h1 class="text-base font-bold tracking-tight text-white leading-tight">AI Timetable Agent</h1>
+            </div>
+            <p class="text-[11px] text-slate-300 font-medium" id="headerDept">SCAD College &bull; Developed By Aathithya A (IT DEPT)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="index.html" class="px-2.5 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white text-[11px] font-bold transition flex items-center gap-1 shadow-sm">
+            <span>&larr;</span>
+            <span>Folio Portal</span>
+          </a>
+          <button onclick="openHelpModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 text-sm transition-colors" title="Help">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stepped Navigation Bar (4 Steps) -->
+      <nav class="flex mt-3 bg-slate-800/90 p-1 rounded-xl gap-1 text-xs font-semibold">
+        <button id="tabBtn0" onclick="switchStep(0)" class="flex-1 py-1.5 rounded-lg text-center transition-all bg-brand-600 text-white shadow-sm font-bold">
+          1. Settings
+        </button>
+        <button id="tabBtn1" onclick="switchStep(1)" class="flex-1 py-1.5 rounded-lg text-center transition-all text-slate-400 hover:text-white font-medium">
+          2. Subjects
+        </button>
+        <button id="tabBtn2" onclick="switchStep(2)" class="flex-1 py-1.5 rounded-lg text-center transition-all text-slate-400 hover:text-white font-medium">
+          3. Schedule
+        </button>
+        <button id="tabBtn3" onclick="switchStep(3)" class="flex-1 py-1.5 rounded-lg text-center transition-all text-slate-400 hover:text-white font-medium">
+          4. Result
+        </button>
+      </nav>
+    </header>
+
+    <!-- Swap Notification Toast (Appears when swap is active) -->
+    <div id="swapNotification" class="hidden sticky top-28 z-20 mx-4 mt-2 p-3 bg-amber-500 text-white rounded-xl shadow-lg flex items-center justify-between animate-bounce">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+        <span class="text-xs font-bold" id="swapNoticeText">Swap Mode: Tap any other card to swap</span>
+      </div>
+      <button onclick="cancelSwap()" class="text-xs bg-amber-700/60 hover:bg-amber-800 px-2 py-1 rounded-md font-bold">
+        Cancel
+      </button>
+    </div>
+
+    <!-- MAIN STEP 1: Institutional Settings -->
+    <section id="step1Content" class="p-4 space-y-4 flex-1">
+      <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-3.5">
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+          <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <h2 class="text-sm font-bold text-slate-800">College & Metadata Settings</h2>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">College / Institute Name</label>
+          <input type="text" id="inpInstitution" value="SCAD COLLEGE OF ENGINEERING AND TECHNOLOGY, CHERANMAHADEVI" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Department Name</label>
+          <input type="text" id="inpDepartment" value="DEPARTMENT OF INFORMATION TECHNOLOGY" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Year / Sem / Class / Dept</label>
+            <input type="text" id="inpYearSem" value="II/III/IT" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Academic Year</label>
+            <input type="text" id="inpAcademicYear" value="2026-2027 ODD SEM" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Mentor Name & Desig</label>
+            <input type="text" id="inpMentor" value="Mrs.SUGANYA,AP/AI&DS" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Periods per Day</label>
+            <input type="number" id="inpPeriodsPerDay" value="7" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <button onclick="loadSampleData()" class="w-full mt-2 py-2.5 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          Load SCAD Sample Data
+        </button>
+      </div>
+    </section>
+
+    <!-- MAIN STEP 2: Staff & Subject Allocations -->
+    <section id="step2Content" class="p-4 space-y-4 flex-1 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-bold text-slate-800">Subject Allocations</h2>
+          <p class="text-xs text-slate-500 font-medium" id="subAllocationCount">Total Subjects: 0 • Hours: 0</p>
+        </div>
+        <button onclick="openAddSubjectModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-transform active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Add Subject
+        </button>
+      </div>
+
+      <!-- Subject Cards List -->
+      <div id="subjectCardsList" class="space-y-2.5">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- MAIN STEP 3: Redesigned Interactive Timetable Schedule Cards -->
+    <section id="step3Content" class="p-4 space-y-4 flex-1 hidden">
+
+      <!-- Day Selector Carousel Pills -->
+      <div class="flex items-center justify-between bg-slate-100 p-1 rounded-2xl shadow-inner gap-1" id="dayPillSelector">
+        <button onclick="selectDayView('Mon')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all bg-white text-brand-600 shadow-sm" data-day="Mon">MON</button>
+        <button onclick="selectDayView('Tue')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900" data-day="Tue">TUE</button>
+        <button onclick="selectDayView('Wed')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900" data-day="Wed">WED</button>
+        <button onclick="selectDayView('Thu')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900" data-day="Thu">THU</button>
+        <button onclick="selectDayView('Fri')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900" data-day="Fri">FRI</button>
+        <button onclick="selectDayView('All')" class="day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900" data-day="All">ALL</button>
+      </div>
+
+      <!-- Timetable Cards Container -->
+      <div id="timetableScheduleCards" class="space-y-4">
+        <!-- Injected dynamically with modern floating cards -->
+      </div>
+
+    </section>
+
+    <!-- MAIN STEP 4: Dedicated Output / Result (A4 300 DPI Document Preview) -->
+    <section id="step4Content" class="p-4 space-y-4 flex-1 hidden">
+
+      <!-- Document Image & Vector Exporter Card -->
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <h3 class="text-xs font-bold text-slate-800">Official A4 Document (300 DPI)</h3>
+          </div>
+          <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full uppercase">Ultra-HD SSAA</span>
+        </div>
+
+        <!-- Document Preview Thumbnail -->
+        <div class="w-full h-48 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden flex items-center justify-center relative group">
+          <img id="documentImgPreview" src="/api/image" alt="Timetable Document Preview" class="w-full h-full object-contain cursor-pointer" onclick="openImageModal()">
+          <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+            <span class="bg-white/95 text-slate-800 text-xs font-bold px-3 py-1.5 rounded-lg shadow">Tap to Zoom</span>
+          </div>
+        </div>
+
+        <!-- Toolbar Buttons -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="openImageModal()" class="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+            Pinch & Zoom
+          </button>
+          <button onclick="window.open('/api/image', '_blank')" class="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Full HD Image
+          </button>
+        </div>
+
+        <button onclick="openVectorWeb()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Open Vector Web / Save PDF (100% Crisp)
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Sticky Bottom Navigation Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 z-30 flex flex-col items-center shadow-2xl">
+      <div id="footerActionContainer" class="w-full flex items-center gap-2">
+        <!-- Populated dynamically in JavaScript -->
+      </div>
+      <div class="text-[10px] text-slate-400 font-semibold pt-1 tracking-wide">
+        Developed By Aathithya A (IT DEPT)
+      </div>
+    </footer>
+
+    <!-- EDIT / REASSIGN PERIOD NATIVE BOTTOM SHEET -->
+    <div id="editModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all" onclick="if(event.target===this) closeEditModal()">
+      <div class="bg-white w-full max-w-md rounded-t-[28px] sm:rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in slide-in-from-bottom duration-200" onclick="event.stopPropagation()">
+        
+        <!-- Drag Handle Indicator (Top Gray Pill) -->
+        <div class="w-10 h-1.5 bg-slate-300 rounded-full mx-auto -mt-1 mb-2"></div>
+
+        <!-- Header Title -->
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900" id="modalPeriodTitle">Tuesday • Period 1</h3>
+          <button onclick="closeEditModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold">✕</button>
+        </div>
+
+        <!-- Current Status Card Component -->
+        <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-3.5 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <h4 class="text-xs font-bold text-slate-900" id="modalCurSubName">CS25C07: OBJECT ORIENTED PROGRAMMING</h4>
+            <p class="text-[11px] text-slate-500" id="modalCurStaffName">Faculty: MR.MOHAN,AP/AI&DS</p>
+          </div>
+          <span id="modalCurBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">THEORY</span>
+        </div>
+
+        <!-- Reassign Section -->
+        <div class="space-y-2 pt-1">
+          <label class="block text-xs font-bold text-slate-700">Assign New Subject</label>
+          <select id="modalSubjectSelect" onchange="checkModalConflict()" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            <!-- Populated dynamically -->
+          </select>
+
+          <!-- Conflict Warning Banner (Conditional) -->
+          <div id="modalConflictWarning" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2 text-amber-900 text-xs font-medium">
+            <span class="text-sm">⚠️</span>
+            <span id="modalConflictText">Warning: Staff member is already assigned to another class during this period.</span>
+          </div>
+        </div>
+
+        <!-- Button Reorganization -->
+        <div class="space-y-2.5 pt-2">
+          <!-- Primary Action: Filled Save Changes Button -->
+          <button onclick="applyPeriodEdit()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-[0.99]">
+            Save Changes
+          </button>
+
+          <!-- Secondary Actions: Outlined Row -->
+          <div class="grid grid-cols-2 gap-2.5">
+            <button onclick="startSwapFromModal()" class="py-2.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 active:scale-95">
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+              Swap Period
+            </button>
+            <button id="modalToggleLabBtn" onclick="toggleLabFromModal()" class="py-2.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 active:scale-95">
+              🧪 Change to Lab
+            </button>
+          </div>
+
+          <!-- Destructive Action: Native TextButton -->
+          <button onclick="clearPeriodFromModal()" class="w-full py-1.5 text-center text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors">
+            🗑️ Clear / Set to Free Period
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FULLSCREEN IMAGE ZOOM MODAL -->
+    <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-3">
+      <div class="w-full max-w-md flex justify-between items-center text-white pb-2 px-2">
+        <span class="text-xs font-bold">Pinch / Zoom Document View</span>
+        <button onclick="closeImageModal()" class="text-sm font-bold bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg">Close ✕</button>
+      </div>
+      <div class="w-full max-w-md h-[80vh] flex items-center justify-center overflow-auto rounded-2xl bg-white/5">
+        <img id="fullImgPreview" src="/api/image" alt="Timetable Full View" class="max-w-none w-[160%] touch-pinch-zoom transition-transform cursor-zoom-in" onclick="toggleZoom(this)">
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // App State
+    let currentStep = 0;
+    let selectedDay = 'Mon';
+    let currentConfig = {
+      institution: "SCAD COLLEGE OF ENGINEERING AND TECHNOLOGY, CHERANMAHADEVI",
+      department: "DEPARTMENT OF INFORMATION TECHNOLOGY",
+      meta: {
+        year_sem_class_dept: "II/III/IT",
+        academic_year: "2026-2027 ODD SEM",
+        mentor: "Mrs.SUGANYA,AP/AI&DS",
+        periods_per_day: 7
+      },
+      days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      periods_per_day: 7,
+      break_after_period: 2,
+      lunch_after_period: 4,
+      subjects: [
+        { code: "MA25C08", name: "DISCRETE MATHEMATICS", staff: "DR.T.JACKULINE,S&H", l: 3, t: 1, p: 0, total: 4 },
+        { code: "CW25201", name: "COMPUTER ORGANIZATION AND ARCHITECTURE", staff: "MR.M.SUBRAMANIAN, AP/AI&DS", l: 3, t: 0, p: 0, total: 3 },
+        { code: "CS25C08", name: "DATA STRUCTURES", staff: "MRS.SUGANYA,AP/AI&DS", l: 3, t: 0, p: 4, total: 7 },
+        { code: "CS25C07", name: "OBJECT ORIENTED PROGRAMMING", staff: "MR.MOHAN,AP/AI&DS", l: 3, t: 0, p: 4, total: 7 },
+        { code: "IT25301", name: "WEB TECHNOLOGIES", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", l: 3, t: 0, p: 2, total: 5 },
+        { code: "NM", name: "NAAN MUDHALVAN", staff: "MRS.SUGANYA,AP/AI&DS", l: 0, t: 0, p: 4, total: 4 },
+        { code: "ENG_LAB", name: "ENGLISH COMMUNICATION SKILLS LAB", staff: "MR.DANI ABRAHAM,AP/S&H", l: 0, t: 0, p: 2, total: 2 },
+        { code: "MENTOR", name: "MENTOR HOUR", staff: "MRS.SUGANYA,AP/AI&DS", l: 1, t: 0, p: 0, total: 1 },
+        { code: "CLUB", name: "CLUB ACTIVITIES", staff: "MS.RAMALAKSHMI,AP/AI&DS", l: 1, t: 0, p: 1, total: 2 }
+      ]
+    };
+
+    // 5x7 Timetable Grid Matrix
+    let currentGrid = null;
+    let swapSource = null; // { dayIdx, periodIdx }
+    let editingSlot = null; // { dayIdx, periodIdx }
+    let draggedSlot = null;
+
+    // Initialize Default Schedule
+    function initDefaultSchedule() {
+      currentGrid = [
+        // Monday
+        [
+          { code: "MA25C08", display: "MA25C08", staff: "DR.T.JACKULINE,S&H", is_lab: false },
+          { code: "CS25C08", display: "CS25C08", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: false },
+          { code: "CW25201", display: "CW25201", staff: "MR.M.SUBRAMANIAN, AP/AI&DS", is_lab: false },
+          { code: "CW25201", display: "CW25201", staff: "MR.M.SUBRAMANIAN, AP/AI&DS", is_lab: false },
+          { code: "CS25C07", display: "CS25C07 (LAB)", staff: "MR.MOHAN,AP/AI&DS", is_lab: true },
+          { code: "CS25C07", display: "CS25C07 (LAB)", staff: "MR.MOHAN,AP/AI&DS", is_lab: true },
+          { code: "CS25C07", display: "CS25C07 (LAB)", staff: "MR.MOHAN,AP/AI&DS", is_lab: true }
+        ],
+        // Tuesday
+        [
+          { code: "IT25301", display: "IT25301 (Lab)", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", is_lab: true },
+          { code: "IT25301", display: "IT25301 (Lab)", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", is_lab: true },
+          { code: "CS25C08", display: "CS25C08", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: false },
+          { code: "CW25201", display: "CW25201", staff: "MR.M.SUBRAMANIAN, AP/AI&DS", is_lab: false },
+          { code: "CS25C07", display: "CS25C07 (LAB)", staff: "MR.MOHAN,AP/AI&DS", is_lab: true },
+          { code: "CLUB", display: "CLUB ACTIVITIES", staff: "MS.RAMALAKSHMI,AP/AI&DS", is_lab: false },
+          { code: "MENTOR", display: "Mentor hour", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: false }
+        ],
+        // Wednesday
+        [
+          { code: "MA25C08", display: "MA25C08", staff: "DR.T.JACKULINE,S&H", is_lab: false },
+          { code: "CS25C07", display: "CS25C07", staff: "MR.MOHAN,AP/AI&DS", is_lab: false },
+          { code: "CLUB", display: "CLUB ACTIVITIES (LAB)", staff: "MS.RAMALAKSHMI,AP/AI&DS", is_lab: true },
+          { code: "IT25301", display: "IT25301", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", is_lab: false },
+          { code: "CS25C08", display: "CS25C08 (LAB)", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "CS25C08", display: "CS25C08 (LAB)", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "CS25C08", display: "CS25C08 (LAB)", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true }
+        ],
+        // Thursday
+        [
+          { code: "MA25C08", display: "MA25C08", staff: "DR.T.JACKULINE,S&H", is_lab: false },
+          { code: "IT25301", display: "IT25301", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", is_lab: false },
+          { code: "NM", display: "NM", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "NM", display: "NM", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "ENG_LAB", display: "English comm. (lab)", staff: "MR.DANI ABRAHAM,AP/S&H", is_lab: true },
+          { code: "ENG_LAB", display: "English comm. (lab)", staff: "MR.DANI ABRAHAM,AP/S&H", is_lab: true },
+          { code: "CS25C08", display: "CS25C08", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: false }
+        ],
+        // Friday
+        [
+          { code: "NM", display: "NM", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "NM", display: "NM", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "MA25C08", display: "MA25C08", staff: "DR.T.JACKULINE,S&H", is_lab: false },
+          { code: "IT25301", display: "IT25301", staff: "MRS. J. JEENATHKAMILA,AP/AI&DS", is_lab: false },
+          { code: "CS25C08", display: "CS25C08 (LAB)", staff: "MRS.SUGANYA,AP/AI&DS", is_lab: true },
+          { code: "CS25C07", display: "CS25C07", staff: "MR.MOHAN,AP/AI&DS", is_lab: false },
+          { code: "CS25C07", display: "CS25C07", staff: "MR.MOHAN,AP/AI&DS", is_lab: false }
+        ]
+      ];
+    }
+
+    // Step Switching
+    function switchStep(stepIndex) {
+      currentStep = stepIndex;
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`tabBtn${i}`);
+        if (!btn) continue;
+        if (i === stepIndex) {
+          btn.className = "flex-1 py-1.5 rounded-lg text-center transition-all bg-brand-600 text-white shadow-sm font-bold";
+        } else {
+          btn.className = "flex-1 py-1.5 rounded-lg text-center transition-all text-slate-400 hover:text-white font-medium";
+        }
+      }
+
+      document.getElementById('step1Content').classList.toggle('hidden', stepIndex !== 0);
+      document.getElementById('step2Content').classList.toggle('hidden', stepIndex !== 1);
+      document.getElementById('step3Content').classList.toggle('hidden', stepIndex !== 2);
+      document.getElementById('step4Content').classList.toggle('hidden', stepIndex !== 3);
+
+      updateFooterButtons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (stepIndex === 2) {
+        renderTimetableCards();
+      }
+    }
+
+    function updateFooterButtons() {
+      const container = document.getElementById('footerActionContainer');
+      if (currentStep === 0) {
+        container.innerHTML = `
+          <button onclick="switchStep(1)" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+            Next: Staff & Subject Allocations ➔
+          </button>
+        `;
+      } else if (currentStep === 1) {
+        container.innerHTML = `
+          <button onclick="switchStep(0)" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">
+            ⬅️ Settings
+          </button>
+          <button onclick="autoAssignAndProceed(2)" class="w-2/3 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-1.5">
+            Auto-Assign & View Schedule 🚀
+          </button>
+        `;
+      } else if (currentStep === 2) {
+        container.innerHTML = `
+          <button onclick="switchStep(1)" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">
+            ⬅️ Edit Subjects
+          </button>
+          <button onclick="switchStep(3)" class="w-2/3 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-1.5">
+            View Output Document ➔
+          </button>
+        `;
+      } else if (currentStep === 3) {
+        container.innerHTML = `
+          <button onclick="switchStep(2)" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">
+            ⬅️ Edit Schedule
+          </button>
+          <button onclick="autoAssignAndProceed(3)" class="w-2/3 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-1.5">
+            🔄 Re-Generate Timetable
+          </button>
+        `;
+      }
+    }
+
+    function loadSampleData() {
+      document.getElementById('inpInstitution').value = currentConfig.institution;
+      document.getElementById('inpDepartment').value = currentConfig.department;
+      document.getElementById('inpYearSem').value = currentConfig.meta.year_sem_class_dept;
+      document.getElementById('inpAcademicYear').value = currentConfig.meta.academic_year;
+      document.getElementById('inpMentor').value = currentConfig.meta.mentor;
+      document.getElementById('inpPeriodsPerDay').value = currentConfig.periods_per_day;
+      renderSubjectCards();
+      alert("SCAD sample parameters & 9 subject allocations loaded successfully!");
+    }
+
+    function renderSubjectCards() {
+      const list = document.getElementById('subjectCardsList');
+      list.innerHTML = "";
+      let totalHrs = 0;
+
+      currentConfig.subjects.forEach((sub, idx) => {
+        totalHrs += (sub.total || (sub.l + sub.t + sub.p));
+        const card = document.createElement('div');
+        card.className = "bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-sm flex items-center justify-between";
+        card.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md font-mono">${sub.code}</span>
+              <span class="text-xs font-semibold text-slate-700">${sub.name}</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium">${sub.staff || 'Staff unassigned'}</p>
+            <div class="flex items-center gap-1 text-[10px] font-bold text-slate-600 pt-0.5">
+              <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">L: ${sub.l}</span>
+              <span class="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">T: ${sub.t}</span>
+              <span class="bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded">P: ${sub.p}</span>
+              <span class="text-slate-400 font-normal ml-1">Total: ${sub.total || (sub.l + sub.t + sub.p)} hrs</span>
+            </div>
+          </div>
+          <button onclick="deleteSubject(${idx})" class="w-8 h-8 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          </button>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById('subAllocationCount').innerText = `Total Subjects: ${currentConfig.subjects.length} • Total Hours: ${totalHrs}`;
+    }
+
+    function deleteSubject(idx) {
+      currentConfig.subjects.splice(idx, 1);
+      renderSubjectCards();
+    }
+
+    function selectDayView(day) {
+      selectedDay = day;
+      document.querySelectorAll('.day-tab').forEach(btn => {
+        if (btn.getAttribute('data-day') === day) {
+          btn.className = "day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all bg-white text-brand-600 shadow-sm";
+        } else {
+          btn.className = "day-tab flex-1 py-1.5 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900";
+        }
+      });
+      renderTimetableCards();
+    }
+
+    // REDESIGNED TIMETABLE CARDS
+    function renderTimetableCards() {
+      const container = document.getElementById('timetableScheduleCards');
+      container.innerHTML = "";
+
+      const days = currentConfig.days;
+      const daysToRender = selectedDay === 'All' ? days : [selectedDay];
+
+      daysToRender.forEach(dayName => {
+        const dayIdx = days.indexOf(dayName);
+        if (dayIdx === -1) return;
+
+        const dayWrapper = document.createElement('div');
+        dayWrapper.className = "space-y-2.5";
+
+        const dayHeader = document.createElement('div');
+        dayHeader.className = "flex items-center justify-between px-1";
+        dayHeader.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+            <span class="text-xs font-bold text-slate-900 uppercase tracking-wide">${dayName} SCHEDULE</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-medium">7 Periods</span>
+        `;
+        dayWrapper.appendChild(dayHeader);
+
+        const periods = currentGrid[dayIdx];
+        let p = 0;
+
+        while (p < periods.length) {
+          // Break Divider after P2
+          if (p === currentConfig.break_after_period) {
+            const brkDiv = document.createElement('div');
+            brkDiv.className = "my-2 px-3.5 py-1.5 bg-amber-50/90 border border-amber-200/80 rounded-xl flex items-center justify-between shadow-xs";
+            brkDiv.innerHTML = `
+              <div class="flex items-center gap-2 text-amber-900 font-semibold text-xs">
+                <span>☕</span>
+                <span>10:40 AM - 11:00 AM</span>
+              </div>
+              <span class="text-[10px] font-bold text-amber-800 bg-amber-100/90 border border-amber-300/60 px-2 py-0.5 rounded-full uppercase tracking-wider">Morning Break</span>
+            `;
+            dayWrapper.appendChild(brkDiv);
+          }
+
+          // Lunch Divider after P4
+          if (p === currentConfig.lunch_after_period) {
+            const lchDiv = document.createElement('div');
+            lchDiv.className = "my-2 px-3.5 py-1.5 bg-emerald-50/90 border border-emerald-200/80 rounded-xl flex items-center justify-between shadow-xs";
+            lchDiv.innerHTML = `
+              <div class="flex items-center gap-2 text-emerald-900 font-semibold text-xs">
+                <span>🍱</span>
+                <span>12:40 PM - 1:30 PM</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 border border-emerald-300/60 px-2 py-0.5 rounded-full uppercase tracking-wider">Lunch Break</span>
+            `;
+            dayWrapper.appendChild(lchDiv);
+          }
+
+          const slot = periods[p];
+          const isLab = slot.is_lab || slot.display.includes("(LAB)") || slot.display.includes("(Lab)");
+
+          // Consecutive lab chain check
+          let labChainLen = 0;
+          if (isLab) {
+            let k = p;
+            while (k < periods.length && (periods[k].is_lab || periods[k].display.includes("(LAB)") || periods[k].display.includes("(Lab)")) && periods[k].code === slot.code) {
+              labChainLen++;
+              k++;
+            }
+          }
+
+          if (labChainLen > 1) {
+            const labGroup = document.createElement('div');
+            labGroup.className = "bg-rose-50/30 border border-rose-200/80 rounded-2xl p-2.5 shadow-sm space-y-1.5 relative overflow-hidden";
+            
+            const accentBar = document.createElement('div');
+            accentBar.className = "absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-rose-500 to-amber-500";
+            labGroup.appendChild(accentBar);
+
+            const groupHeader = document.createElement('div');
+            groupHeader.className = "flex items-center justify-between pl-2 pb-1 border-b border-rose-100";
+            groupHeader.innerHTML = `
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs">🧪</span>
+                <span class="text-xs font-bold text-rose-900">${slot.code} Continuous Lab</span>
+              </div>
+              <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-200">
+                ${labChainLen} Periods Linked
+              </span>
+            `;
+            labGroup.appendChild(groupHeader);
+
+            for (let chainIdx = 0; chainIdx < labChainLen; chainIdx++) {
+              const currentPeriodIdx = p + chainIdx;
+              const subSlot = periods[currentPeriodIdx];
+              const card = createSinglePeriodCard(dayIdx, currentPeriodIdx, subSlot, true);
+              labGroup.appendChild(card);
+            }
+
+            dayWrapper.appendChild(labGroup);
+            p += labChainLen;
+            continue;
+          }
+
+          const card = createSinglePeriodCard(dayIdx, p, slot, false);
+          dayWrapper.appendChild(card);
+          p++;
+        }
+
+        container.appendChild(dayWrapper);
+      });
+    }
+
+    function createSinglePeriodCard(dayIdx, periodIdx, slot, isInsideLinkedLab = false) {
+      const card = document.createElement('div');
+      const isSelected = (swapSource && swapSource.dayIdx === dayIdx && swapSource.periodIdx === periodIdx);
+      const isLab = slot.is_lab || slot.display.includes("(LAB)") || slot.display.includes("(Lab)");
+      const isFree = !slot.code || slot.code === "-" || slot.code === "Free";
+
+      let baseClass = "bg-white border rounded-xl p-3 shadow-xs hover:shadow-md transition-all flex items-center justify-between relative select-none cursor-pointer ";
+      if (isSelected) {
+        baseClass += "border-amber-400 ring-2 ring-amber-400 bg-amber-50/50 ";
+      } else if (isFree) {
+        baseClass += "border-dashed border-slate-300 bg-slate-50/80 ";
+      } else if (isInsideLinkedLab) {
+        baseClass += "border-rose-200 bg-white ";
+      } else {
+        baseClass += "border-slate-200/90 hover:border-slate-300 ";
+      }
+      card.className = baseClass;
+
+      card.setAttribute('draggable', 'true');
+      card.addEventListener('dragstart', (e) => {
+        draggedSlot = { dayIdx, periodIdx };
+        card.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', JSON.stringify({ dayIdx, periodIdx }));
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        draggedSlot = null;
+      });
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+      });
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        if (draggedSlot && (draggedSlot.dayIdx !== dayIdx || draggedSlot.periodIdx !== periodIdx)) {
+          swapTwoSlots(draggedSlot.dayIdx, draggedSlot.periodIdx, dayIdx, periodIdx);
+        }
+      });
+
+      card.innerHTML = `
+        <div class="flex items-center gap-3">
+          <!-- 1. Left: Drag Handle & Period Badge -->
+          <div class="flex items-center gap-2">
+            <div class="text-slate-300 hover:text-slate-500 cursor-grab p-0.5" title="Drag to reorder">
+              <svg class="w-3.5 h-4.5" viewBox="0 0 16 24" fill="currentColor">
+                <circle cx="5" cy="4" r="1.8" />
+                <circle cx="11" cy="4" r="1.8" />
+                <circle cx="5" cy="12" r="1.8" />
+                <circle cx="11" cy="12" r="1.8" />
+                <circle cx="5" cy="20" r="1.8" />
+                <circle cx="11" cy="20" r="1.8" />
+              </svg>
+            </div>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-lg ${isLab ? 'bg-rose-100 text-rose-700' : 'bg-brand-50 text-brand-600'} font-mono">
+              P${periodIdx + 1}
+            </span>
+          </div>
+
+          <!-- 2. Center: Typography Hierarchy -->
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold text-slate-800 tracking-tight font-mono">
+                ${isFree ? '<span class="text-slate-400 font-normal italic">Free Period</span>' : slot.code}
+              </span>
+              ${isLab ? '<span class="bg-rose-50 text-rose-700 border border-rose-200/80 text-[10px] font-bold px-2 py-0.2 rounded-full">LAB</span>' : ''}
+              ${isSelected ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.2 rounded">SELECTED FOR SWAP</span>' : ''}
+            </div>
+            <span class="text-[11px] text-slate-500 font-medium line-clamp-1 mt-0.5">
+              ${isFree ? 'Tap to assign subject or staff' : (slot.staff || 'Faculty unassigned')}
+            </span>
+          </div>
+        </div>
+
+        <!-- 3. Right: Swap & Edit Buttons -->
+        <div class="flex items-center gap-1 pl-2">
+          <button onclick="event.stopPropagation(); triggerCardSwap(${dayIdx}, ${periodIdx})" class="w-7 h-7 rounded-lg ${isSelected ? 'bg-amber-500 text-white' : 'bg-slate-100 hover:bg-brand-50 text-slate-500 hover:text-brand-600'} flex items-center justify-center transition-colors" title="Swap with another period">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+          </button>
+          <button onclick="event.stopPropagation(); openEditModal(${dayIdx}, ${periodIdx})" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-brand-50 text-slate-500 hover:text-brand-600 flex items-center justify-center transition-colors" title="Edit period details">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          </button>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        if (swapSource) {
+          triggerCardSwap(dayIdx, periodIdx);
+        } else {
+          openEditModal(dayIdx, periodIdx);
+        }
+      });
+
+      return card;
+    }
+
+    function triggerCardSwap(dayIdx, periodIdx) {
+      if (!swapSource) {
+        swapSource = { dayIdx, periodIdx };
+        const dayName = currentConfig.days[dayIdx];
+        document.getElementById('swapNotification').classList.remove('hidden');
+        document.getElementById('swapNoticeText').innerText = `Swap Active: [${dayName} P${periodIdx + 1}] selected. Tap any other slot to swap!`;
+        renderTimetableCards();
+      } else {
+        if (swapSource.dayIdx === dayIdx && swapSource.periodIdx === periodIdx) {
+          cancelSwap();
+          return;
+        }
+        swapTwoSlots(swapSource.dayIdx, swapSource.periodIdx, dayIdx, periodIdx);
+        cancelSwap();
+      }
+    }
+
+    function cancelSwap() {
+      swapSource = null;
+      document.getElementById('swapNotification').classList.add('hidden');
+      renderTimetableCards();
+    }
+
+    function swapTwoSlots(d1, p1, d2, p2) {
+      const temp = currentGrid[d1][p1];
+      currentGrid[d1][p1] = currentGrid[d2][p2];
+      currentGrid[d2][p2] = temp;
+      renderTimetableCards();
+    }
+
+    let modalIsLab = false;
+
+    function openEditModal(d, p) {
+      editingSlot = { dayIdx: d, periodIdx: p };
+      const slot = currentGrid[d][p];
+      const dayName = currentConfig.days[d];
+      modalIsLab = slot.is_lab || slot.display.includes("(LAB)") || slot.display.includes("(Lab)");
+
+      document.getElementById('modalPeriodTitle').innerText = `${dayName} • Period ${p + 1}`;
+
+      const isFree = !slot.code || slot.code === "-" || slot.code === "Free";
+      document.getElementById('modalCurSubName').innerText = isFree ? "Free / Unassigned Period" : (slot.subject_name || slot.code);
+      document.getElementById('modalCurStaffName').innerText = isFree ? "No Staff Assigned" : `Faculty: ${slot.staff || 'Unassigned'}`;
+
+      const badge = document.getElementById('modalCurBadge');
+      if (modalIsLab) {
+        badge.innerText = "LAB";
+        badge.className = "text-[10px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+      } else {
+        badge.innerText = "THEORY";
+        badge.className = "text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200";
+      }
+
+      const labBtn = document.getElementById('modalToggleLabBtn');
+      labBtn.innerText = modalIsLab ? "📖 Change to Theory" : "🧪 Change to Lab";
+
+      const select = document.getElementById('modalSubjectSelect');
+      select.innerHTML = '<option value="FREE">- (Free / Empty Period) -</option>';
+      currentConfig.subjects.forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub.code;
+        opt.innerText = `${sub.code}: ${sub.name} (${sub.staff || 'No Staff'})`;
+        if (sub.code === slot.code) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      checkModalConflict();
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function checkModalConflict() {
+      if (!editingSlot) return;
+      const select = document.getElementById('modalSubjectSelect');
+      const val = select.value;
+      const warnBox = document.getElementById('modalConflictWarning');
+      const warnText = document.getElementById('modalConflictText');
+      if (val === "FREE") {
+        warnBox.classList.add('hidden');
+        return;
+      }
+      const sub = currentConfig.subjects.find(s => s.code === val);
+      if (!sub || !sub.staff) {
+        warnBox.classList.add('hidden');
+        return;
+      }
+      let count = 0;
+      const d = editingSlot.dayIdx;
+      for (let pi = 0; pi < currentGrid[d].length; pi++) {
+        if (pi !== editingSlot.periodIdx && currentGrid[d][pi].staff === sub.staff) {
+          count++;
+        }
+      }
+      if (count >= 2) {
+        warnText.innerText = `Warning: ${sub.staff} is already assigned to ${count} other classes on this day.`;
+        warnBox.classList.remove('hidden');
+      } else {
+        warnBox.classList.add('hidden');
+      }
+    }
+
+    function toggleLabFromModal() {
+      modalIsLab = !modalIsLab;
+      const badge = document.getElementById('modalCurBadge');
+      const labBtn = document.getElementById('modalToggleLabBtn');
+      if (modalIsLab) {
+        badge.innerText = "LAB";
+        badge.className = "text-[10px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+        labBtn.innerText = "📖 Change to Theory";
+      } else {
+        badge.innerText = "THEORY";
+        badge.className = "text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200";
+        labBtn.innerText = "🧪 Change to Lab";
+      }
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      editingSlot = null;
+    }
+
+    function applyPeriodEdit() {
+      if (!editingSlot) return;
+      const { dayIdx, periodIdx } = editingSlot;
+      const select = document.getElementById('modalSubjectSelect');
+      const chosenCode = select.value;
+
+      if (chosenCode === "FREE") {
+        currentGrid[dayIdx][periodIdx] = { code: "", display: "-", staff: "", is_lab: false };
+      } else {
+        const subObj = currentConfig.subjects.find(s => s.code === chosenCode) || { code: chosenCode, name: chosenCode, staff: "" };
+        const displayTag = modalIsLab ? `${chosenCode} (LAB)` : chosenCode;
+        currentGrid[dayIdx][periodIdx] = {
+          code: chosenCode,
+          display: displayTag,
+          subject_name: subObj.name || chosenCode,
+          staff: subObj.staff || "",
+          is_lab: modalIsLab
+        };
+      }
+
+      closeEditModal();
+      renderTimetableCards();
+    }
+
+    function startSwapFromModal() {
+      if (!editingSlot) return;
+      const { dayIdx, periodIdx } = editingSlot;
+      closeEditModal();
+      triggerCardSwap(dayIdx, periodIdx);
+    }
+
+    function clearPeriodFromModal() {
+      if (!editingSlot) return;
+      const { dayIdx, periodIdx } = editingSlot;
+      currentGrid[dayIdx][periodIdx] = { code: "", display: "-", staff: "", is_lab: false };
+      closeEditModal();
+      renderTimetableCards();
+    }
+
+    function autoAssignAndProceed(targetStep = 2) {
+      if (!currentGrid) {
+        initDefaultSchedule();
+      }
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: currentConfig })
+      }).then(r => r.json()).then(data => {
+        if (data.grid) currentGrid = data.grid;
+      }).catch(() => {
+        // Offline fallback
+      }).finally(() => {
+        switchStep(targetStep);
+      });
+    }
+
+    function openImageModal() {
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+    function toggleZoom(img) {
+      if (img.classList.contains('scale-150')) {
+        img.classList.remove('scale-150');
+      } else {
+        img.classList.add('scale-150');
+      }
+    }
+
+    function openVectorWeb() {
+      window.open('/api/html', '_blank');
+    }
+
+    function openHelpModal() {
+      alert("AI Timetable Agent\\nDeveloped By: Aathithya A (IT DEPT)\\nSCAD College of Engineering & Technology\\n\\n• Drag any card or tap 'Swap' (⇄) to reorder times.\\n• Tap the pencil icon (✏️) to edit subject or staff.\\n• Labs are visually linked together as a continuous block.\\n• Tap 'Save PDF' to print or export vector document.");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initDefaultSchedule();
+      renderSubjectCards();
+      switchStep(0);
+    });
+  </script>
+</body>
+</html>

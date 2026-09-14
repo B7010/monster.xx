@@ -1,0 +1,131 @@
+{
+  "institution": "SCAD COLLEGE OF ENGINEERING AND TECHNOLOGY, CHERANMAHADEVI",
+  "department": "DEPARTMENT OF INFORMATION TECHNOLOGY",
+  "title": "TIME TABLE",
+  "meta": {
+    "year_sem_class_dept": "II/III/IT",
+    "academic_year": "2026-2027 ODD SEM",
+    "mentor": "Mrs.SUGANYA,AP/AI&DS",
+    "wef": "01.07.2026",
+    "version": "01"
+  },
+  "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  "periods_per_day": 7,
+  "timings": [
+    "9:00 AM -\n9:50 AM",
+    "9:50 AM -\n10:40 AM",
+    "11:00 AM -\n11:50 AM",
+    "11:50 AM -\n12:40 PM",
+    "1:30 PM -\n2:20 PM",
+    "2:20 PM -\n3:10 PM",
+    "3:10 PM -\n4:00 PM"
+  ],
+  "break_after_period": 2,
+  "break_label": "BREAK",
+  "break_time": "10:40 AM - 11:00 AM",
+  "lunch_after_period": 4,
+  "lunch_label": "LUNCH BREAK",
+  "lunch_time": "12:40 PM - 1:30 PM",
+  "subjects": [
+    {
+      "code": "MA25C08",
+      "name": "DISCRETE MATHEMATICS",
+      "staff": "DR.T.JACKULINE,S&H",
+      "l": 3,
+      "t": 1,
+      "p": 0,
+      "total": 4,
+      "display_code": "MA25C08"
+    },
+    {
+      "code": "CW25201",
+      "name": "COMPUTER ORGANIZATION AND ARCHITECTURE",
+      "staff": "MR.M.SUBRAMANIAN, AP/AI&DS",
+      "l": 3,
+      "t": 0,
+      "p": 0,
+      "total": 3,
+      "display_code": "CW25201"
+    },
+    {
+      "code": "CS25C08",
+      "name": "DATA STRUCTURES",
+      "staff": "MRS.SUGANYA,AP/AI&DS",
+      "l": 3,
+      "t": 0,
+      "p": 4,
+      "total": 7,
+      "display_code": "CS25C08",
+      "lab_display_code": "CS25C08(LAB)",
+      "lab_block_size": 3
+    },
+    {
+      "code": "CS25C07",
+      "name": "OBJECT ORIENTED PROGRAMMING",
+      "staff": "MR.MOHAN,AP/AI&DS",
+      "l": 3,
+      "t": 0,
+      "p": 4,
+      "total": 7,
+      "display_code": "CS25C07",
+      "lab_display_code": "CS25C07(LAB)",
+      "lab_block_size": 3
+    },
+    {
+      "code": "IT25301",
+      "name": "WEB TECHNOLOGIES",
+      "staff": "MRS. J. JEENATHKAMILA,AP/AI&DS",
+      "l": 3,
+      "t": 0,
+      "p": 2,
+      "total": 5,
+      "display_code": "IT25301",
+      "lab_display_code": "IT25301 (Lab)",
+      "lab_block_size": 2
+    },
+    {
+      "code": "",
+      "name": "NAAN MUDHALVAN",
+      "staff": "MRS.SUGANYA,AP/AI&DS",
+      "l": 0,
+      "t": 0,
+      "p": 4,
+      "total": 4,
+      "display_code": "NM",
+      "lab_display_code": "NM",
+      "lab_block_size": 2
+    },
+    {
+      "code": "",
+      "name": "ENGLISH COMMUNICATION SKILLS LABORATORY - II",
+      "staff": "MR.DANI ABRAHAM,AP/S&H",
+      "l": 0,
+      "t": 0,
+      "p": 2,
+      "total": 2,
+      "display_code": "English communication (lab)",
+      "lab_display_code": "English communication (lab)",
+      "lab_block_size": 2
+    },
+    {
+      "code": "",
+      "name": "MENTOR HOUR",
+      "staff": "MRS.SUGANYA,AP/AI&DS",
+      "l": 1,
+      "t": 0,
+      "p": 0,
+      "total": 1,
+      "display_code": "Mentor hour"
+    },
+    {
+      "code": "",
+      "name": "CLUB ACTIVITIES",
+      "staff": "MS.RAMALAKSHMI,AP/AI&DS",
+      "l": 1,
+      "t": 0,
+      "p": 1,
+      "total": 2,
+      "display_code": "CLUB ACTIVITIES"
+    }
+  ]
+}

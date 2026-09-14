@@ -3,175 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyMonitorXX- Campus Timetable & Live Monitoring Portal</title>
+  <title>FOLIO - Campus Timetable & Live Monitoring Portal</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260914_bg_circuit">
 </head>
-<body class="bg-slate-100/70 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="login-mode text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-300">
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs px-4 sm:px-6 py-2.5">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <!-- App Brand -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs px-3 sm:px-5 py-2">
+    <div id="header-nav-container" class="w-full max-w-full flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
+      <!-- App Brand (Top Left Corner) -->
+      <div id="header-brand" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl overflow-hidden bg-white border border-slate-200/90 shadow-sm flex items-center justify-center p-0.5 shrink-0">
+          <img src="logo.png" alt="FOLIO Logo" class="w-full h-full object-contain">
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900">FOLIO<span class="text-indigo-600">XX</span></span>
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900">FOLIO</span>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">Campus OS</span>
           </div>
           <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Automated Timetable & Live Class Monitoring</p>
         </div>
-      </div>
-
-      <!-- Center: Role Switcher (Visible when Authenticated) -->
-      <div id="header-role-switcher" class="hidden flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200/80">
-        <button onclick="setRole('admin')" data-role="admin" class="role-pill-btn flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all">
-          <span class="text-sm sm:text-base">👨💼</span>
-          <span>Admin</span>
-        </button>
-        <button onclick="setRole('hod')" data-role="hod" class="role-pill-btn flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm bg-indigo-600 text-white transition-all">
-          <span class="text-sm sm:text-base">👨🏫</span>
-          <span>HOD</span>
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot"></span>
-        </button>
-        <button onclick="setRole('teacher')" data-role="teacher" class="role-pill-btn flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all">
-          <span class="text-sm sm:text-base">📱</span>
-          <span>Teacher</span>
-        </button>
-      </div>
-
-      <!-- Right Controls: Profile & Sign Out -->
-      <div class="flex items-center gap-2 sm:gap-3">
-
-
-        <div id="header-clock" class="hidden md:flex items-center gap-2 text-xs font-mono font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+        <!-- Live Clock Pill -->
+        <div id="header-clock" class="hidden md:flex items-center gap-2 text-xs font-mono font-medium text-slate-500 bg-slate-50/80 px-3 py-1.5 rounded-xl border border-slate-200/80 ml-1 sm:ml-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot"></span>
           <span id="live-clock">Loading time...</span>
         </div>
+      </div>
 
-        <!-- User Profile Pill & Sign Out (Visible when Logged In) -->
-        <div id="header-user-profile" class="hidden flex items-center gap-2 pl-2 border-l border-slate-200">
-          <div class="flex items-center gap-2">
-            <div id="header-user-avatar" class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">
+      <!-- Top Right Corner Controls: Role Switcher & User Profile with Sign Out -->
+      <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+        <!-- Modern Role Segmented Control -->
+        <div id="header-role-switcher" class="hidden flex items-center p-1 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-2xs">
+          <button onclick="setRole('admin')" data-role="admin" class="role-pill-btn role-segmented-tab active flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-900 shadow-xs ring-1 ring-slate-200/60 transition-all">
+            <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Admin</span>
+          </button>
+          <button onclick="setRole('hod')" data-role="hod" class="role-pill-btn role-segmented-tab flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-900 hover:bg-white/50 transition-all">
+            <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <span>HOD Desk</span>
+          </button>
+          <button onclick="setRole('teacher')" data-role="teacher" class="role-pill-btn role-segmented-tab flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-900 hover:bg-white/50 transition-all">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
+            <span>Teacher App</span>
+          </button>
+        </div>
+
+        <!-- User Profile Pill & Sign Out (Top-Right Corner) -->
+        <div id="header-user-profile" class="hidden flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200/60">
+          <div class="flex items-center gap-2.5">
+            <div id="header-user-avatar" class="w-8 h-8 rounded-xl bg-gradient-to-tr from-slate-900 to-indigo-600 text-white font-extrabold flex items-center justify-center text-xs shadow-xs">
               A
             </div>
             <div class="hidden xl:block text-left">
               <div class="flex items-center gap-1.5">
-                <span id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">Admin User</span>
-                <span id="header-user-role" class="px-1.5 py-0.2 rounded text-[9px] font-black bg-indigo-100 text-indigo-800">ADMIN</span>
+                <span id="header-user-name" class="text-xs font-bold text-slate-900 leading-tight">Admin User</span>
+                <span id="header-user-role" class="px-1.5 py-0.5 rounded text-[9px] font-black bg-slate-100 text-slate-700 uppercase">ADMIN</span>
               </div>
-              <span id="header-user-email" class="text-[11px] text-slate-500 font-mono block">canvaonly322@gmail.com</span>
+              <span id="header-user-email" class="text-[11px] text-slate-400 font-mono block leading-tight">canvaonly322@gmail.com</span>
             </div>
           </div>
-          <button onclick="handleLogout()" title="Sign Out" class="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+          <button onclick="handleLogout()" title="Sign Out" class="px-3 py-1.5 bg-slate-50 hover:bg-rose-50 hover:text-rose-700 text-slate-600 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200/80">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             <span class="hidden sm:inline">Sign Out</span>
           </button>
         </div>
-
-        <!-- Reset Button -->
-        <button onclick="resetAllData()" title="Reset All Demo Data" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        </button>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6">
+  <main class="flex-1 w-full flex flex-col">
 
     <!-- ========================================================================= -->
     <!-- 0. LOGIN SECTION (AUTHENTICATION WITH GMAIL & PASSWORD) -->
     <!-- ========================================================================= -->
-    <section id="section-login" class="role-section active">
-      <div class="max-w-md mx-auto my-8 sm:my-14 space-y-6">
+    <section id="section-login" class="role-section active login-screen-canvas">
+      <div class="relative w-full max-w-md mx-auto z-10 my-auto">
+        <!-- Glowing gradient aura behind card -->
+        <div class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500/25 via-indigo-500/30 to-purple-500/25 rounded-[2.2rem] blur-xl opacity-40 animate-pulse pointer-events-none"></div>
 
         <!-- Login Card -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 p-6 sm:p-8 space-y-6">
-          <div class="text-center space-y-2">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-indigo-200">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <div class="login-card-glass rounded-3xl p-6 sm:p-9 space-y-6">
+          <div class="text-center space-y-3">
+            <div class="w-20 h-20 rounded-2xl bg-white border border-white/20 shadow-lg p-2.5 mx-auto flex items-center justify-center hover:scale-105 transition-transform duration-300">
+              <img src="logo.png" alt="FOLIO Logo" class="w-full h-full object-contain">
             </div>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Campus Portal Login</h2>
-            <p class="text-xs text-slate-500">Sign in with your campus Gmail address & password</p>
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 text-[11px] font-bold border border-indigo-400/30 mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Campus Timetable & Monitoring OS
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Welcome Back</h2>
+              <p class="text-xs text-slate-400 mt-1">Sign in with your campus Gmail address & password</p>
+            </div>
           </div>
 
           <!-- Login Form -->
           <form id="form-login" class="space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Gmail / Campus Email</label>
-              <div class="relative">
-                <input id="login-email" type="email" placeholder="canvaonly322@gmail.com" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition font-medium">
-                <span class="absolute right-3 top-2.5 text-slate-400 text-xs">✉</span>
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Campus Email / ID</label>
+              <div class="relative flex items-center">
+                <input id="login-email" type="email" placeholder="hulk@pluto.in" required class="w-full px-4 py-3 pr-10 text-sm bg-slate-900/60 border border-slate-700/80 rounded-xl focus:bg-slate-900/90 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 outline-none transition font-medium text-white placeholder:text-slate-500">
+                <span class="absolute right-3.5 text-slate-400 pointer-events-none">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+                </span>
               </div>
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
-                <button type="button" onclick="togglePasswordVisibility('login-password')" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800">
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Password</label>
+                <button type="button" onclick="togglePasswordVisibility('login-password')" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition">
                   Show / Hide
                 </button>
               </div>
-              <div class="relative">
-                <input id="login-password" type="password" placeholder="••••••••••••" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition font-medium">
-                <span class="absolute right-3 top-2.5 text-slate-400 text-xs">🔒</span>
+              <div class="relative flex items-center">
+                <input id="login-password" type="password" placeholder="••••••••••••" required class="w-full px-4 py-3 pr-10 text-sm bg-slate-900/60 border border-slate-700/80 rounded-xl focus:bg-slate-900/90 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 outline-none transition font-medium text-white placeholder:text-slate-500">
+                <span class="absolute right-3.5 text-slate-400 pointer-events-none">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </span>
               </div>
             </div>
 
-            <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-sm shadow-md shadow-indigo-200 transition transform active:scale-98">
+            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/45 transition transform active:scale-98">
               Sign In to Portal
             </button>
           </form>
 
-          <!-- Quick Demo 1-Click Login Shortcuts -->
-          <div class="pt-4 border-t border-slate-100 space-y-2.5">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-center">Quick 1-Click Demo Login</span>
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="quickLogin('admin')" class="p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 transition text-center text-xs">
-                <span class="font-bold text-indigo-900 block">👨💼 Admin</span>
-                <span class="text-[10px] text-indigo-600 truncate block">Default Acc</span>
-              </button>
-              <button onclick="quickLogin('hod')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition text-center text-xs">
-                <span class="font-bold text-slate-800 block">👨🏫 HOD</span>
-                <span class="text-[10px] text-slate-500 truncate block">IT Dept</span>
-              </button>
-              <button onclick="quickLogin('teacher')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition text-center text-xs">
-                <span class="font-bold text-slate-800 block">📱 Teacher</span>
-                <span class="text-[10px] text-slate-500 truncate block">Arun (PWA)</span>
-              </button>
-            </div>
+          <div class="pt-1 flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Secured with Campus Role-Based Access Control</span>
           </div>
+        </div>
 
-          <!-- Hierarchy Policy Alert -->
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-1.5">
-            <div class="flex items-center gap-1.5 font-bold text-slate-800">
-              <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span>Default Credentials & Hierarchy:</span>
-            </div>
-            <p class="text-[11px]">
-              <strong>Default Admin:</strong> <code class="bg-indigo-100 text-indigo-800 px-1 rounded font-mono font-bold">canvaonly322@gmail.com</code> | Pass: <code class="bg-indigo-100 text-indigo-800 px-1 rounded font-mono font-bold">123BALASELVARAJA123</code>
-            </p>
-            <p class="text-[11px] text-slate-500">
-              👑 <strong>Admin</strong> creates HODs with Gmail & Password.<br>
-              👨🏫 <strong>HOD</strong> creates Teachers with Gmail & Password.
-            </p>
-          </div>
+        <!-- Credit in transparent colour below the login card -->
+        <div class="mt-4 text-center">
+          <p class="text-xs font-semibold tracking-widest uppercase text-white/40 hover:text-white/60 transition-colors select-none">
+            Developed By IT DEPT
+          </p>
         </div>
 
       </div>
@@ -180,7 +159,7 @@
     <!-- ========================================================================= -->
     <!-- 1. ADMIN ROLE VIEW -->
     <!-- ========================================================================= -->
-    <section id="section-admin" class="role-section">
+    <section id="section-admin" class="role-section max-w-7xl w-full mx-auto p-3 sm:p-6">
 
       <!-- MOBILE OFF-CANVAS SLIDE-OVER DRAWER FOR ADMINISTRATOR (ACCESSED VIA 3-LINES HAMBURGER) -->
       <div id="admin-mobile-drawer" class="fixed inset-0 z-50 drawer-closed lg:hidden">
@@ -193,8 +172,8 @@
             <!-- Drawer Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-purple-700 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                  👑
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-purple-700 text-white flex items-center justify-center shadow-md">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
                   <h3 class="font-bold text-slate-900 text-sm">Administrator Panel</h3>
@@ -222,7 +201,7 @@
                       <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                       <span class="font-semibold text-slate-800">HODs Management</span>
                     </span>
-                    <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">2</span>
+                    <span id="admin-drawer-count-hods" class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">0</span>
                   </a>
                   <a href="javascript:void(0)" onclick="closeAdminDrawer(); openModal('modal-add-hod')" class="flex items-center gap-3 px-3.5 py-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold pl-10 transition">
                     <span>+ Add HOD (Set Password)</span>
@@ -236,7 +215,7 @@
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                       <span>View Teachers</span>
                     </span>
-                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">38</span>
+                    <span id="admin-drawer-count-teachers" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
                   </a>
                 </div>
 
@@ -247,29 +226,32 @@
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                       <span>Subjects</span>
                     </span>
-                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">24</span>
+                    <span id="admin-drawer-count-subjects" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
                   </a>
                   <a href="javascript:void(0)" onclick="switchAdminTab('classes')" data-admin-tab="classes" class="admin-drawer-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
                     <span class="flex items-center gap-3">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                       <span>Classes & Batches</span>
                     </span>
-                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">12</span>
+                    <span id="admin-drawer-count-classes" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
                   </a>
                   <a href="javascript:void(0)" onclick="switchAdminTab('classrooms')" data-admin-tab="classrooms" class="admin-drawer-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
                     <span class="flex items-center gap-3">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                       <span>Classrooms / Labs</span>
                     </span>
-                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">18</span>
+                    <span id="admin-drawer-count-rooms" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
                   </a>
                 </div>
 
                 <div class="pt-2">
                   <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Timetable Engine</div>
-                  <a href="javascript:void(0)" onclick="switchAdminTab('generate-timetable')" data-admin-tab="generate-timetable" class="admin-drawer-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span class="font-semibold text-purple-700">Generate Timetable</span>
+                  <a href="javascript:void(0)" onclick="switchAdminTab('ai-studio')" data-admin-tab="ai-studio" class="admin-drawer-link flex items-center justify-between px-3.5 py-2 rounded-xl text-indigo-700 bg-indigo-50/70 font-bold transition">
+                    <span class="flex items-center gap-3">
+                      <span class="text-base">⚡</span>
+                      <span>AI Timetable Studio</span>
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-200 text-indigo-800">300 DPI</span>
                   </a>
                   <a href="javascript:void(0)" onclick="switchAdminTab('current-timetable')" data-admin-tab="current-timetable" class="admin-drawer-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -332,91 +314,84 @@
       <div class="flex flex-col lg:flex-row gap-6 items-start">
 
         <!-- Admin Left Sidebar (Desktop View Only - hidden on mobile) -->
-        <aside class="hidden lg:block w-64 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 shrink-0">
-          <div class="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-            <span>ADMINISTRATOR PANEL</span>
+        <aside class="hidden lg:block w-64 bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 shrink-0">
+          <div class="flex items-center justify-between px-3 py-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Navigation</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </div>
 
-          <nav class="space-y-1 mt-2 text-sm font-medium">
-            <a href="javascript:void(0)" onclick="switchAdminTab('dashboard')" data-admin-tab="dashboard" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-semibold transition">
+          <nav class="space-y-1 mt-1 text-xs font-semibold">
+            <!-- Dashboard -->
+            <a href="javascript:void(0)" onclick="switchAdminTab('dashboard')" data-admin-tab="dashboard" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-bold border border-indigo-200/70 transition shadow-2xs">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
               <span>Dashboard</span>
             </a>
 
-            <!-- HOD Management (Admin creates HODs) -->
-            <div class="pt-2">
-              <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Department Heads</div>
-              <a href="javascript:void(0)" onclick="switchAdminTab('hods')" data-admin-tab="hods" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <span class="flex items-center gap-3">
-                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                  <span class="font-semibold text-slate-800">HODs Management</span>
+            <!-- Campus Structure -->
+            <div class="pt-3">
+              <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Campus Directory</div>
+              <a href="javascript:void(0)" onclick="switchAdminTab('hods')" data-admin-tab="hods" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  <span>HODs Management</span>
                 </span>
-                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">2</span>
+                <span id="admin-sidebar-count-hods" class="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">0</span>
               </a>
-              <a href="javascript:void(0)" onclick="openModal('modal-add-hod')" class="flex items-center gap-3 px-3.5 py-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold pl-10 transition">
-                <span>+ Add HOD (Set Password)</span>
-              </a>
-            </div>
-
-            <!-- Teachers Dropdown/Group -->
-            <div class="pt-2">
-              <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Faculty</div>
-              <a href="javascript:void(0)" onclick="switchAdminTab('teachers')" data-admin-tab="teachers" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <span class="flex items-center gap-3">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  <span>View Teachers</span>
+              <a href="javascript:void(0)" onclick="switchAdminTab('teachers')" data-admin-tab="teachers" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  <span>Faculty Directory</span>
                 </span>
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">38</span>
+                <span id="admin-sidebar-count-teachers" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
               </a>
-            </div>
-
-            <!-- Subjects Group -->
-            <div class="pt-2">
-              <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Academics</div>
-              <a href="javascript:void(0)" onclick="switchAdminTab('subjects')" data-admin-tab="subjects" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <span class="flex items-center gap-3">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                  <span>Subjects</span>
+              <a href="javascript:void(0)" onclick="switchAdminTab('subjects')" data-admin-tab="subjects" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                  <span>Curriculum Subjects</span>
                 </span>
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">24</span>
+                <span id="admin-sidebar-count-subjects" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
               </a>
-              <a href="javascript:void(0)" onclick="switchAdminTab('classes')" data-admin-tab="classes" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <span class="flex items-center gap-3">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              <a href="javascript:void(0)" onclick="switchAdminTab('classes')" data-admin-tab="classes" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   <span>Classes & Batches</span>
                 </span>
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">12</span>
+                <span id="admin-sidebar-count-classes" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
               </a>
-              <a href="javascript:void(0)" onclick="switchAdminTab('classrooms')" data-admin-tab="classrooms" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <span class="flex items-center gap-3">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
-                  <span>Classrooms / Labs</span>
+              <a href="javascript:void(0)" onclick="switchAdminTab('classrooms')" data-admin-tab="classrooms" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                  <span>Classrooms & Labs</span>
                 </span>
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">18</span>
+                <span id="admin-sidebar-count-rooms" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0</span>
               </a>
             </div>
 
-            <!-- Timetable Engine -->
-            <div class="pt-2">
-              <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Timetable Engine</div>
-              <a href="javascript:void(0)" onclick="switchAdminTab('generate-timetable')" data-admin-tab="generate-timetable" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <span class="font-semibold text-purple-700">Generate Timetable</span>
+            <!-- Timetable Operations -->
+            <div class="pt-3">
+              <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Timetable Engine</div>
+              <a href="javascript:void(0)" onclick="switchAdminTab('ai-studio')" data-admin-tab="ai-studio" class="admin-sidebar-link flex items-center justify-between px-3.5 py-2 rounded-xl text-slate-700 hover:bg-indigo-50/60 hover:text-indigo-700 transition">
+                <span class="flex items-center gap-2.5">
+                  <span class="text-sm">⚡</span>
+                  <span class="font-bold text-indigo-600">AI Timetable Studio</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-100 text-indigo-700">300 DPI</span>
               </a>
-              <a href="javascript:void(0)" onclick="switchAdminTab('current-timetable')" data-admin-tab="current-timetable" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <a href="javascript:void(0)" onclick="switchAdminTab('current-timetable')" data-admin-tab="current-timetable" class="admin-sidebar-link flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span>Current Timetable</span>
               </a>
-              <a href="javascript:void(0)" onclick="switchAdminTab('versions')" data-admin-tab="versions" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <a href="javascript:void(0)" onclick="switchAdminTab('versions')" data-admin-tab="versions" class="admin-sidebar-link flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span>Drafts & History</span>
               </a>
             </div>
 
-            <div class="pt-2 border-t border-slate-100">
-              <a href="javascript:void(0)" onclick="switchAdminTab('settings')" data-admin-tab="settings" class="admin-sidebar-link flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>Settings</span>
+            <!-- Settings -->
+            <div class="pt-3 border-t border-slate-100">
+              <a href="javascript:void(0)" onclick="switchAdminTab('settings')" data-admin-tab="settings" class="admin-sidebar-link flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Term & Calendar Settings</span>
               </a>
             </div>
           </nav>
@@ -427,108 +402,216 @@
 
           <!-- TAB 1: ADMIN DASHBOARD -->
           <div id="admin-tab-dashboard" class="admin-tab-pane space-y-6">
-            <!-- Header greeting & status -->
-            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-              <div class="relative z-10 max-w-2xl">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-400/30">Logged In as System Admin</span>
-                <h2 class="text-2xl font-bold mt-2">Timetable Control & Generation Hub</h2>
-                <p class="text-slate-300 text-sm mt-1">Configure campus resources, provision HOD accounts, input constraint rules, auto-generate collision-free schedules, and publish versions.</p>
-                <div class="mt-4 flex flex-wrap gap-3">
-                  <button onclick="switchAdminTab('generate-timetable')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>Launch Timetable Generator</span>
+            <!-- Modern Command Hero Header -->
+            <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800/80">
+              <!-- Ambient soft light highlights -->
+              <div class="absolute -right-16 -top-16 w-72 h-72 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute right-1/3 -bottom-16 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div class="relative z-10 max-w-2xl space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-indigo-200 border border-white/10 backdrop-blur-md">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Campus Orchestration Engine</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Timetable Control & Generation Hub</h2>
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">Configure campus resources, provision HOD accounts, input institutional constraints, and auto-generate collision-free schedules.</p>
+                <div class="pt-2 flex flex-wrap gap-3">
+                  <button onclick="switchAdminTab('ai-studio')" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-lg shadow-purple-500/25 flex items-center gap-2 transform active:scale-98">
+                    <svg class="w-4 h-4 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Launch AI Timetable Studio</span>
                   </button>
-                  <button onclick="openModal('modal-add-hod')" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5">
-                    + Add New HOD (Set Password)
+                  <button onclick="switchAdminTab('generate-timetable')" class="px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white border border-white/15 rounded-xl text-xs sm:text-sm font-bold transition-all backdrop-blur-sm flex items-center gap-2">
+                    <span>Quick Generator</span>
                   </button>
+                  <button onclick="openModal('modal-add-hod')" class="px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white border border-white/15 rounded-xl text-xs sm:text-sm font-bold transition-all backdrop-blur-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Add HOD</span>
                 </div>
               </div>
             </div>
 
-            <!-- Admin's Main Job Workflow (Visual Stepper) -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <div class="flex items-center justify-between mb-4">
+            <!-- Campus Readiness & Quick Setup Bar (Dual Panel) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              <!-- Left Panel: Engine Readiness Tracker (lg:col-span-7) -->
+              <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Campus Setup Readiness</h3>
+                    <p class="text-xs text-slate-500">Prerequisites required before running automated schedule generation</p>
+                  </div>
+                  <span id="readiness-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">Setup Required</span>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="space-y-1.5">
+                  <div class="flex justify-between items-center text-xs font-semibold">
+                    <span class="text-slate-600">Engine Readiness Score</span>
+                    <span id="readiness-progress-pct" class="text-indigo-600 font-bold">0% Configured</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div id="readiness-progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <!-- Checklist Items Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs">
+                  <div id="readiness-step-hod" class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/60 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2.5">
+                      <span class="step-check flex items-center justify-center w-5 h-5 rounded-full bg-white border border-slate-200 text-slate-400 font-bold">○</span>
+                      <span class="font-semibold text-slate-800">Department Heads</span>
+                    </div>
+                    <span class="step-badge text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Pending</span>
+                  </div>
+
+                  <div id="readiness-step-teacher" class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/60 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2.5">
+                      <span class="step-check flex items-center justify-center w-5 h-5 rounded-full bg-white border border-slate-200 text-slate-400 font-bold">○</span>
+                      <span class="font-semibold text-slate-800">Faculty Profiles</span>
+                    </div>
+                    <span class="step-badge text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Pending</span>
+                  </div>
+
+                  <div id="readiness-step-subject" class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/60 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2.5">
+                      <span class="step-check flex items-center justify-center w-5 h-5 rounded-full bg-white border border-slate-200 text-slate-400 font-bold">○</span>
+                      <span class="font-semibold text-slate-800">Curriculum Subjects</span>
+                    </div>
+                    <span class="step-badge text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Pending</span>
+                  </div>
+
+                  <div id="readiness-step-room" class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/60 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2.5">
+                      <span class="step-check flex items-center justify-center w-5 h-5 rounded-full bg-white border border-slate-200 text-slate-400 font-bold">○</span>
+                      <span class="font-semibold text-slate-800">Classrooms & Labs</span>
+                    </div>
+                    <span class="step-badge text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Pending</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Panel: Quick Actions (lg:col-span-5) -->
+              <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-3 flex flex-col justify-between">
                 <div>
-                  <h3 class="font-bold text-slate-900 text-base">Admin's Core Workflow</h3>
-                  <p class="text-xs text-slate-500">Autonomous 6-step lifecycle for timetable generation and rollout</p>
+                  <h3 class="font-bold text-slate-900 text-base">Quick Entity Setup</h3>
+                  <p class="text-xs text-slate-500">Direct shortcuts to add campus data</p>
                 </div>
-                <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">Rule-Engine Ready</span>
-              </div>
 
-              <!-- Visual Flow Diagram -->
-              <div class="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2">
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mx-auto mb-2">1</div>
-                  <h4 class="font-bold text-xs text-slate-800">Add Data</h4>
-                  <p class="text-[11px] text-slate-500 mt-1">HODs, Rooms, Subjects</p>
-                </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mx-auto mb-2">2</div>
-                  <h4 class="font-bold text-xs text-slate-800">Set Rules</h4>
-                  <p class="text-[11px] text-slate-500 mt-1">Hours/day, Lab blocks</p>
-                </div>
-                <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center mx-auto mb-2">3</div>
-                  <h4 class="font-bold text-xs text-indigo-900">Generate</h4>
-                  <p class="text-[11px] text-indigo-700 mt-1">AI Constraint Solver</p>
-                </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mx-auto mb-2">4</div>
-                  <h4 class="font-bold text-xs text-slate-800">Review</h4>
-                  <p class="text-[11px] text-slate-500 mt-1">Verify zero conflicts</p>
-                </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center mx-auto mb-2">5</div>
-                  <h4 class="font-bold text-xs text-slate-800">Apply</h4>
-                  <p class="text-[11px] text-slate-500 mt-1">Publish to HOD & App</p>
-                </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                  <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center mx-auto mb-2">6</div>
-                  <h4 class="font-bold text-xs text-slate-800">Versions</h4>
-                  <p class="text-[11px] text-slate-500 mt-1">Manage Drafts & Logs</p>
+                <div class="grid grid-cols-2 gap-2.5">
+                  <button onclick="openModal('modal-add-hod')" class="p-3 rounded-2xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50/40 text-left transition-all group hover-lift">
+                    <div class="w-7 h-7 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800">Add HOD</h4>
+                    <p class="text-[10px] text-slate-400">Set password</p>
+                  </button>
+
+                  <button onclick="openModal('modal-hod-add-teacher')" class="p-3 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 text-left transition-all group hover-lift">
+                    <div class="w-7 h-7 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800">Add Teacher</h4>
+                    <p class="text-[10px] text-slate-400">Faculty login</p>
+                  </button>
+
+                  <button onclick="openModal('modal-add-subject')" class="p-3 rounded-2xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 text-left transition-all group hover-lift">
+                    <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800">Add Subject</h4>
+                    <p class="text-[10px] text-slate-400">Weekly hours</p>
+                  </button>
+
+                  <button onclick="openModal('modal-add-classroom')" class="p-3 rounded-2xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 text-left transition-all group hover-lift">
+                    <div class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800">Add Room/Lab</h4>
+                    <p class="text-[10px] text-slate-400">Capacity</p>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- College Data Overview Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-                <div class="text-xs text-slate-500 font-semibold">Active HODs</div>
-                <div class="text-2xl font-extrabold text-purple-700 mt-1">2</div>
-                <div class="text-xs text-slate-500 mt-1">IT & CSE Departments</div>
+            <!-- College Data Overview Cards (Redesigned) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover-lift">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active HODs</span>
+                  <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  </div>
+                </div>
+                <div id="admin-stat-hods" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100">
+                  <span id="admin-stat-hods-sub" class="text-xs text-slate-400 font-medium">None registered</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">Depts</span>
+                </div>
               </div>
-              <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-                <div class="text-xs text-slate-500 font-semibold">Total Faculty</div>
-                <div class="text-2xl font-extrabold text-slate-900 mt-1">38</div>
-                <div class="text-xs text-emerald-600 mt-1 flex items-center gap-1 font-medium">✓ All profiles mapped</div>
+
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover-lift">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Faculty</span>
+                  <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  </div>
+                </div>
+                <div id="admin-stat-teachers" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100">
+                  <span id="admin-stat-teachers-sub" class="text-xs text-slate-400 font-medium">No faculty registered</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">Faculty</span>
+                </div>
               </div>
-              <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-                <div class="text-xs text-slate-500 font-semibold">Classrooms & Labs</div>
-                <div class="text-2xl font-extrabold text-slate-900 mt-1">18</div>
-                <div class="text-xs text-indigo-600 mt-1 font-medium">100% room mapped</div>
+
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover-lift">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Classrooms & Labs</span>
+                  <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                  </div>
+                </div>
+                <div id="admin-stat-rooms" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100">
+                  <span id="admin-stat-rooms-sub" class="text-xs text-slate-400 font-medium">No rooms added</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Campus</span>
+                </div>
               </div>
-              <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-                <div class="text-xs text-slate-500 font-semibold">Active Timetable</div>
-                <div class="text-2xl font-extrabold text-indigo-700 mt-1">v3.2</div>
-                <div class="text-xs text-slate-500 mt-1">Odd Sem 2026-27</div>
+
+              <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover-lift">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Timetable</span>
+                  <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </div>
+                </div>
+                <div id="admin-stat-timetable" class="text-3xl font-extrabold text-slate-900 mt-2">None</div>
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100">
+                  <span id="admin-stat-timetable-sub" class="text-xs text-slate-400 font-medium">Not Generated</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Release</span>
+                </div>
               </div>
             </div>
 
-            <!-- Active Timetable Versions Table -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-              <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-bold text-slate-900 text-sm">Timetable Versions & History</h3>
-                <button onclick="switchAdminTab('generate-timetable')" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">+ Create New Draft</button>
+            <!-- Active Timetable Versions Table (Redesigned) -->
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+              <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Timetable Releases & Snapshot History</h3>
+                  <p class="text-xs text-slate-500">Autonomous schedule generations, active terms, and draft archives</p>
+                </div>
+                <button onclick="switchAdminTab('generate-timetable')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-200/80 transition flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Create New Draft</span>
+                </button>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                  <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                  <thead class="bg-slate-50/80 text-slate-500 text-[11px] uppercase tracking-wider font-bold border-b border-slate-100">
                     <tr>
-                      <th class="py-3 px-4">Version</th>
-                      <th class="py-3 px-4">Academic Term</th>
-                      <th class="py-3 px-4">Applied Date</th>
-                      <th class="py-3 px-4">Generated By</th>
-                      <th class="py-3 px-4">Status</th>
+                      <th class="py-3.5 px-5">Version</th>
+                      <th class="py-3.5 px-5">Academic Term</th>
+                      <th class="py-3.5 px-5">Applied Date</th>
+                      <th class="py-3.5 px-5">Generated By</th>
+                      <th class="py-3.5 px-5">Status</th>
                     </tr>
                   </thead>
                   <tbody id="admin-versions-tbody"></tbody>
@@ -563,6 +646,236 @@
                   </thead>
                   <tbody id="admin-hods-tbody"></tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: AI TIMETABLE STUDIO (FULL 4-STEP AGENT & DOCUMENT ENGINE) -->
+          <div id="admin-tab-ai-studio" class="admin-tab-pane hidden space-y-6">
+            <!-- Studio Header Card -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 text-white shadow-xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <img src="logo.png" alt="SCAD Logo" class="w-14 h-14 rounded-2xl bg-white p-1 shadow-md border border-amber-400/80 object-contain shrink-0">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h2 class="text-xl font-bold tracking-tight text-white">AI Timetable Scheduler & Document Generator</h2>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/40">300 DPI SSAA</span>
+                  </div>
+                  <p class="text-xs text-slate-300 mt-1">Institutional schedule generator with 1-tap period swapping and publication-ready A4 document export</p>
+                  <p class="text-[11px] text-amber-300/90 font-medium mt-0.5">Developed By Aathithya A (IT DEPT) • SCAD College of Engineering and Technology</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <button onclick="aiStudioLoadSample()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1.5 border border-white/15">
+                  <svg class="w-3.5 h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  <span>Load SCAD Preset</span>
+                </button>
+                <a href="ai_timetable_studio.html" target="_blank" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  <span>Open Dedicated View</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Stepped Navigation Bar (4 Steps) -->
+            <div class="bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap gap-2">
+              <button id="aiStepBtn0" onclick="aiSwitchStep(0)" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-xs">
+                1. Settings & Metadata
+              </button>
+              <button id="aiStepBtn1" onclick="aiSwitchStep(1)" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-semibold transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                2. Staff & Subject Allocations
+              </button>
+              <button id="aiStepBtn2" onclick="aiSwitchStep(2)" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-semibold transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                3. Interactive Schedule Matrix
+              </button>
+              <button id="aiStepBtn3" onclick="aiSwitchStep(3)" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-semibold transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                4. Official Document & PDF
+              </button>
+            </div>
+
+            <!-- Swap Notification Toast -->
+            <div id="aiSwapNotification" class="hidden p-3.5 bg-amber-500 text-white rounded-2xl shadow-lg flex items-center justify-between animate-pulse">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span class="text-xs font-bold" id="aiSwapNoticeText">Swap Mode Active: Click any other period cell to swap slots</span>
+              </div>
+              <button onclick="aiCancelSwap()" class="text-xs bg-amber-800/80 hover:bg-amber-900 px-3 py-1.5 rounded-xl font-bold transition">
+                Cancel Swap
+              </button>
+            </div>
+
+            <!-- STEP 1: INSTITUTIONAL SETTINGS -->
+            <div id="aiStep1Content" class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+              <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Step 1: College & Metadata Setup</h3>
+                  <p class="text-xs text-slate-500">Document headers and institutional parameters</p>
+                </div>
+                <button onclick="aiStudioLoadSample()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+                  <span>⚡ Reset to SCAD Defaults</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">College / Institute Full Name</label>
+                  <input type="text" id="aiInpInstitution" value="SCAD COLLEGE OF ENGINEERING AND TECHNOLOGY, CHERANMAHADEVI" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Department Name</label>
+                  <input type="text" id="aiInpDepartment" value="DEPARTMENT OF INFORMATION TECHNOLOGY" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Year / Sem / Class</label>
+                  <input type="text" id="aiInpYearSem" value="II/III/IT" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Academic Year</label>
+                  <input type="text" id="aiInpAcademicYear" value="2026-2027 ODD SEM" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Class Mentor</label>
+                  <input type="text" id="aiInpMentor" value="Mrs.SUGANYA,AP/AI&DS" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Daily Periods</label>
+                  <input type="number" id="aiInpPeriodsPerDay" value="7" min="4" max="10" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+              </div>
+
+              <!-- Timings Info Bar -->
+              <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs text-indigo-900">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold">Standard Timing Scheme:</span>
+                  <span>7 Periods • Morning Break (10:40 - 11:00 AM) • Lunch (12:40 - 01:30 PM)</span>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 font-bold text-[11px]">Anna University / SCAD Standard</span>
+              </div>
+
+              <div class="flex justify-end pt-2">
+                <button onclick="aiSwitchStep(1)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                  <span>Next: Staff & Subject Allocations</span>
+                  <span>&rarr;</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 2: STAFF & SUBJECT ALLOCATIONS -->
+            <div id="aiStep2Content" class="hidden bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+              <div class="border-b border-slate-100 pb-3 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Step 2: Subject & Staff Allocations</h3>
+                  <p class="text-xs text-slate-500" id="aiSubAllocationSummary">Total Subjects: 0 • Weekly Teaching Hours: 0</p>
+                </div>
+                <button onclick="aiOpenAddSubjectModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Add Subject</span>
+                </button>
+              </div>
+
+              <!-- Subject Cards Grid -->
+              <div id="aiSubjectCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                <!-- Dynamically populated -->
+              </div>
+
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <button onclick="aiSwitchStep(0)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                  &larr; Back to Settings
+                </button>
+                <button onclick="aiAutoAssignAndProceed(2)" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2 transform active:scale-95">
+                  <span>Run AI Constraint Solver & View Matrix</span>
+                  <span>🚀</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 3: INTERACTIVE SCHEDULE MATRIX & SWAPPING -->
+            <div id="aiStep3Content" class="hidden bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+              <div class="border-b border-slate-100 pb-3 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Step 3: Interactive Schedule Matrix & Period Cards</h3>
+                  <p class="text-xs text-slate-500">Tap "⇄ Swap" on any card, then tap a second card to swap periods instantly</p>
+                </div>
+                <!-- Day filter pills -->
+                <div class="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200/80 gap-1 text-xs">
+                  <button onclick="aiSelectDay('Mon')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all bg-white text-indigo-600 shadow-xs" data-day="Mon">MON</button>
+                  <button onclick="aiSelectDay('Tue')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900" data-day="Tue">TUE</button>
+                  <button onclick="aiSelectDay('Wed')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900" data-day="Wed">WED</button>
+                  <button onclick="aiSelectDay('Thu')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900" data-day="Thu">THU</button>
+                  <button onclick="aiSelectDay('Fri')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900" data-day="Fri">FRI</button>
+                  <button onclick="aiSelectDay('All')" class="ai-day-tab px-3 py-1.5 font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900" data-day="All">ALL DAYS</button>
+                </div>
+              </div>
+
+              <!-- Interactive Schedule Cards List -->
+              <div id="aiScheduleCardsContainer" class="space-y-4">
+                <!-- Injected via JavaScript -->
+              </div>
+
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <button onclick="aiSwitchStep(1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                  &larr; Edit Subjects
+                </button>
+                <button onclick="aiSwitchStep(3)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                  <span>View Official Document & Export</span>
+                  <span>&rarr;</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 4: OFFICIAL DOCUMENT & VECTOR PDF EXPORT -->
+            <div id="aiStep4Content" class="hidden bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+              <div class="border-b border-slate-100 pb-3 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Step 4: Official A4 Timetable Document (300 DPI)</h3>
+                  <p class="text-xs text-slate-500">Publication-ready institutional document matching official college guidelines</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Ultra-HD SSAA</span>
+                  <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">0 Conflicts</span>
+                </div>
+              </div>
+
+              <!-- Live High-Resolution Image Preview -->
+              <div class="w-full bg-slate-900/5 rounded-2xl border border-slate-200 p-3 flex flex-col items-center justify-center relative overflow-hidden group">
+                <img id="aiDocumentImgPreview" src="/api/image" alt="Official SCAD Timetable Document" class="max-h-[520px] w-auto object-contain rounded-xl shadow-md cursor-pointer transition hover:scale-[1.01]" onclick="aiOpenImageModal()">
+                <div class="absolute bottom-6 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-lg pointer-events-none opacity-90">
+                  🔍 Click image to enlarge & inspect high-resolution vector lines
+                </div>
+              </div>
+
+              <!-- Export and Application Action Bar -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                <button onclick="aiOpenImageModal()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                  <span>Fullscreen Zoom</span>
+                </button>
+                <a href="/api/image" download="SCAD_Timetable_300DPI.png" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  <span>Download PNG (300 DPI)</span>
+                </a>
+                <button onclick="window.open('/api/html', '_blank')" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>Vector Web / Print PDF</span>
+                </button>
+                <button onclick="aiApplyToFolioCampus()" class="py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md transform active:scale-95">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Apply Campus-Wide</span>
+                </button>
+              </div>
+
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <button onclick="aiSwitchStep(2)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                  &larr; Back to Period Swapping
+                </button>
+                <button onclick="aiAutoAssignAndProceed(3)" class="px-5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  <span>Re-Generate Timetable</span>
+                </button>
               </div>
             </div>
           </div>
@@ -651,16 +964,16 @@
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm">
                     <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <span>Timetable Draft v3.3 Successfully Generated</span>
+                    <span id="gen-results-title">Timetable Draft Generated Successfully</span>
                   </div>
                   <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white">0 Conflicts</span>
                 </div>
-                <p class="text-xs text-emerald-700">All 38 teachers satisfied their weekly hours limits. All 18 rooms assigned within capacity. Ready to apply campus-wide.</p>
+                <p id="gen-results-description" class="text-xs text-emerald-700">All registered teachers satisfied their weekly hours limits. All classrooms assigned within capacity. Ready to apply campus-wide.</p>
                 <div class="flex gap-3 pt-2">
                   <button onclick="applyGeneratedTimetable()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition">
                     ✓ Apply Timetable Campus-Wide
                   </button>
-                  <button onclick="showToast('Timetable v3.3 saved as draft', 'info')" class="px-4 py-2 bg-white text-slate-700 rounded-xl text-xs font-semibold border border-slate-300 hover:bg-slate-50 transition">
+                  <button onclick="saveDraftTimetable()" class="px-4 py-2 bg-white text-slate-700 rounded-xl text-xs font-semibold border border-slate-300 hover:bg-slate-50 transition">
                     Save as Draft Only
                   </button>
                 </div>
@@ -684,6 +997,10 @@
                   <h3 class="font-bold text-slate-900 text-base">Campus Faculty Directory</h3>
                   <p class="text-xs text-slate-500">Teachers registered by HODs and Admin across departments</p>
                 </div>
+                <button onclick="openModal('modal-hod-add-teacher')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Add Faculty Member</span>
+                </button>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -706,70 +1023,50 @@
           <!-- TAB: SUBJECTS -->
           <div id="admin-tab-subjects" class="admin-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h3 class="font-bold text-slate-900 text-base mb-4">Course Curriculum & Registered Subjects</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                  <div class="flex justify-between items-start">
-                    <span class="font-mono text-xs font-bold text-indigo-600 bg-indigo-100/70 px-2 py-0.5 rounded">IT301</span>
-                    <span class="text-xs font-bold text-slate-500">5 hrs / week</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 mt-2">Python Programming & Scripting</h4>
-                  <p class="text-xs text-slate-500 mt-1">Theory (3 hrs) + Practical Lab (2 hrs continuous)</p>
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Course Curriculum & Registered Subjects</h3>
+                  <p class="text-xs text-slate-500">Curriculum subjects and lecture/lab hour allocations</p>
                 </div>
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                  <div class="flex justify-between items-start">
-                    <span class="font-mono text-xs font-bold text-indigo-600 bg-indigo-100/70 px-2 py-0.5 rounded">IT302</span>
-                    <span class="text-xs font-bold text-slate-500">4 hrs / week</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 mt-2">Database Management Systems (DBMS)</h4>
-                  <p class="text-xs text-slate-500 mt-1">Theory (3 hrs) + SQL Tutorial (1 hr)</p>
-                </div>
+                <button onclick="openModal('modal-add-subject')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Add Subject</span>
+                </button>
               </div>
+              <div id="admin-subjects-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
           </div>
 
           <!-- TAB: CLASSES & ROOMS -->
           <div id="admin-tab-classes" class="admin-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h3 class="font-bold text-slate-900 text-base mb-3">Academic Classes & Student Batches</h3>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span class="text-base font-bold text-slate-800">IT-A</span>
-                  <p class="text-xs text-slate-500 mt-0.5">60 Students • Room C204</p>
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Academic Classes & Student Batches</h3>
+                  <p class="text-xs text-slate-500">Student cohorts and designated lecture halls</p>
                 </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span class="text-base font-bold text-slate-800">IT-B</span>
-                  <p class="text-xs text-slate-500 mt-0.5">58 Students • Room C205</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span class="text-base font-bold text-slate-800">IT-C</span>
-                  <p class="text-xs text-slate-500 mt-0.5">62 Students • Room C206</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span class="text-base font-bold text-slate-800">IT-D</span>
-                  <p class="text-xs text-slate-500 mt-0.5">59 Students • Room C207</p>
-                </div>
+                <button onclick="openModal('modal-add-class')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Add Class Batch</span>
+                </button>
               </div>
+              <div id="admin-classes-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
             </div>
           </div>
 
           <div id="admin-tab-classrooms" class="admin-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h3 class="font-bold text-slate-900 text-base mb-3">Classrooms & Laboratory Infrastructure</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span class="font-bold text-slate-900">Room C204</span>
-                  <p class="text-xs text-slate-500 mt-0.5">Smart Lecture Hall • Cap: 65</p>
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Classrooms & Laboratory Infrastructure</h3>
+                  <p class="text-xs text-slate-500">Lecture halls, smart rooms, and computing complexes</p>
                 </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span class="font-bold text-slate-900">Room C205</span>
-                  <p class="text-xs text-slate-500 mt-0.5">Standard Lecture Hall • Cap: 60</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span class="font-bold text-slate-900">Lab 2 (AI Lab)</span>
-                  <p class="text-xs text-slate-500 mt-0.5">50 High-End Workstations</p>
-                </div>
+                <button onclick="openModal('modal-add-classroom')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Add Classroom / Lab</span>
+                </button>
               </div>
+              <div id="admin-classrooms-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
             </div>
           </div>
 
@@ -778,52 +1075,29 @@
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
               <div class="flex justify-between items-center mb-4">
                 <div>
-                  <h3 class="font-bold text-slate-900 text-base">Campus Active Timetable (v3.2)</h3>
+                  <h3 class="font-bold text-slate-900 text-base">Campus Active Timetable</h3>
                   <p class="text-xs text-slate-500">Weekly Master Schedule Matrix</p>
                 </div>
-                <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-semibold text-slate-700">🖨 Print / Export PDF</button>
+                <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl font-semibold text-slate-700 transition flex items-center gap-1.5 border border-slate-200">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>Print / Export PDF</span>
+                </button>
               </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs text-center border-collapse border border-slate-200">
-                  <thead>
-                    <tr class="bg-slate-100 font-bold text-slate-700">
-                      <th class="border border-slate-200 p-2">Day / Time</th>
-                      <th class="border border-slate-200 p-2">09:00 - 10:00</th>
-                      <th class="border border-slate-200 p-2">10:00 - 11:00</th>
-                      <th class="border border-slate-200 p-2">11:00 - 12:00</th>
-                      <th class="border border-slate-200 p-2">12:00 - 01:00</th>
-                      <th class="border border-slate-200 p-2">01:00 - 02:00</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="font-bold bg-slate-50 border border-slate-200 p-2">Monday (IT-A)</td>
-                      <td class="border border-slate-200 p-2 bg-indigo-50 font-semibold text-indigo-900">DBMS<br><span class="text-[10px] text-slate-500">Kumar • C204</span></td>
-                      <td class="border border-slate-200 p-2 bg-emerald-50 font-semibold text-emerald-900">Python<br><span class="text-[10px] text-slate-500">Arun • C204</span></td>
-                      <td class="border border-slate-200 p-2 bg-amber-50 font-semibold text-amber-900">Maths<br><span class="text-[10px] text-slate-500">Priya • C204</span></td>
-                      <td class="border border-slate-200 p-2 bg-slate-100 text-slate-400 font-bold">LUNCH BREAK</td>
-                      <td class="border border-slate-200 p-2 bg-purple-50 font-semibold text-purple-900">Python Lab<br><span class="text-[10px] text-slate-500">Arun • Lab 2</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <div id="admin-current-timetable-container"></div>
             </div>
           </div>
 
           <!-- TAB: VERSIONS & SETTINGS -->
           <div id="admin-tab-versions" class="admin-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h3 class="font-bold text-slate-900 text-base mb-2">Timetable Version Management</h3>
-              <p class="text-xs text-slate-500 mb-4">Roll back or inspect snapshots of previous releases.</p>
-              <div class="space-y-3">
-                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex justify-between items-center">
-                  <div>
-                    <h4 class="font-bold text-emerald-900 text-sm">v3.2 - Live Academic Schedule</h4>
-                    <p class="text-xs text-emerald-700">Applied Sep 10, 2026 by AI Scheduler</p>
-                  </div>
-                  <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">ACTIVE</span>
+              <div class="flex justify-between items-center mb-4">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base">Timetable Version Management</h3>
+                  <p class="text-xs text-slate-500">Roll back or inspect snapshots of previous releases</p>
                 </div>
+                <button onclick="switchAdminTab('generate-timetable')" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">+ Create New Draft</button>
               </div>
+              <div id="admin-versions-history-container" class="space-y-3"></div>
             </div>
           </div>
 
@@ -854,7 +1128,7 @@
     <!-- ========================================================================= -->
     <!-- 2. HOD ROLE VIEW (DEPARTMENT & LIVE MONITORING) -->
     <!-- ========================================================================= -->
-    <section id="section-hod" class="role-section">
+    <section id="section-hod" class="role-section max-w-7xl w-full mx-auto p-3 sm:p-6">
 
       <!-- MOBILE OFF-CANVAS SLIDE-OVER DRAWER FOR HOD (ACCESSED VIA 3-LINES HAMBURGER) -->
       <div id="hod-mobile-drawer" class="fixed inset-0 z-50 drawer-closed lg:hidden">
@@ -867,8 +1141,8 @@
             <!-- Drawer Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                  👨🏫
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-600 text-white flex items-center justify-center shadow-md">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 </div>
                 <div>
                   <h3 class="font-bold text-slate-900 text-sm">HOD IT Department</h3>
@@ -904,7 +1178,7 @@
                     <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <span>Vacant Classes</span>
                   </span>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-700">5 Vacant</span>
+                  <span id="hod-drawer-count-vacant" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600">0 Vacant</span>
                 </a>
                 <a href="javascript:void(0)" onclick="switchHodTab('substitute-management')" data-hod-tab="substitute-management" class="hod-drawer-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition">
                   <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
@@ -917,7 +1191,7 @@
                       <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                       <span class="font-semibold text-slate-800">Department Teachers</span>
                     </span>
-                    <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Manage</span>
+                    <span id="hod-drawer-count-teachers" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">0</span>
                   </a>
                   <a href="javascript:void(0)" onclick="closeHodDrawer(); openModal('modal-hod-add-teacher')" class="flex items-center gap-3 px-3.5 py-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-semibold pl-10 transition">
                     <span>+ Add Teacher (Set Pass)</span>
@@ -998,7 +1272,7 @@
                 <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 <span>Vacant Classes</span>
               </span>
-              <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-700">5 Vacant</span>
+              <span id="hod-sidebar-count-vacant" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600">0 Vacant</span>
             </a>
             <a href="javascript:void(0)" onclick="switchHodTab('substitute-management')" data-hod-tab="substitute-management" class="hod-sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition">
               <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
@@ -1012,7 +1286,7 @@
                   <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                   <span class="font-semibold text-slate-800">Department Teachers</span>
                 </span>
-                <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Manage</span>
+                <span id="hod-sidebar-count-teachers" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">0</span>
               </a>
               <a href="javascript:void(0)" onclick="openModal('modal-hod-add-teacher')" class="flex items-center gap-3 px-3.5 py-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-semibold pl-10 transition">
                 <span>+ Add Teacher (Set Pass)</span>
@@ -1056,8 +1330,8 @@
               <!-- Today's Classes -->
               <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
                 <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Classes</div>
-                <div id="hod-stat-total" class="text-3xl font-extrabold text-slate-900 mt-2">48</div>
-                <div class="text-[11px] text-slate-400 mt-1">Scheduled for IT Dept</div>
+                <div id="hod-stat-total" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+                <div class="text-[11px] text-slate-400 mt-1">Scheduled for Department</div>
               </div>
 
               <!-- Active -->
@@ -1066,8 +1340,11 @@
                   <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Active</span>
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse-dot"></span>
                 </div>
-                <div id="hod-stat-active" class="text-3xl font-extrabold text-emerald-700 mt-2">32</div>
-                <div class="text-[11px] text-emerald-600 font-medium mt-1">🟢 Teachers Checked-in</div>
+                <div id="hod-stat-active" class="text-3xl font-extrabold text-emerald-700 mt-2">0</div>
+                <div class="text-[11px] text-emerald-600 font-medium mt-1 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>Teachers Checked-in</span>
+                </div>
               </div>
 
               <!-- Scheduled -->
@@ -1076,18 +1353,24 @@
                   <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Scheduled</span>
                   <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
                 </div>
-                <div id="hod-stat-scheduled" class="text-3xl font-extrabold text-slate-700 mt-2">9</div>
-                <div class="text-[11px] text-slate-500 mt-1">⚪ Later periods today</div>
+                <div id="hod-stat-scheduled" class="text-3xl font-extrabold text-slate-700 mt-2">0</div>
+                <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                  <span>Later periods today</span>
+                </div>
               </div>
 
               <!-- Vacant (Critical) -->
               <div class="bg-rose-50/60 p-4 rounded-2xl border border-rose-300 shadow-xs relative overflow-hidden">
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-bold text-rose-800 uppercase tracking-wider">Vacant</span>
-                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
                 </div>
-                <div id="hod-stat-vacant" class="text-3xl font-extrabold text-rose-600 mt-2">5</div>
-                <div class="text-[11px] text-rose-700 font-semibold mt-1">🔴 Requires Substitute!</div>
+                <div id="hod-stat-vacant" class="text-3xl font-extrabold text-rose-600 mt-2">0</div>
+                <div class="text-[11px] text-rose-700 font-semibold mt-1 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span>Requires Substitute</span>
+                </div>
               </div>
 
               <!-- Substitute -->
@@ -1096,8 +1379,11 @@
                   <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Substitute</span>
                   <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                 </div>
-                <div id="hod-stat-substitute" class="text-3xl font-extrabold text-amber-700 mt-2">2</div>
-                <div class="text-[11px] text-amber-800 font-medium mt-1">🟡 Active Substitutions</div>
+                <div id="hod-stat-substitute" class="text-3xl font-extrabold text-amber-700 mt-2">0</div>
+                <div class="text-[11px] text-amber-800 font-medium mt-1 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span>Active Substitutions</span>
+                </div>
               </div>
             </div>
 
@@ -1107,13 +1393,11 @@
                 <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">HOD</div>
                 <div>
                   <h4 class="font-bold text-slate-900 text-sm">HOD Action Protocol</h4>
-                  <p class="text-xs text-slate-600">See live status $\rightarrow$ See vacant class $\rightarrow$ Find available teacher $\rightarrow$ Assign substitute</p>
+                  <p class="text-xs text-slate-600">See live status &rarr; See vacant class &rarr; Find available teacher &rarr; Assign substitute</p>
                 </div>
               </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <button onclick="openSubstituteModal(3)" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5">
-                  <span>🔴 Fix IT-C Vacancy</span>
-                </button>
+              <div id="hod-banner-action-area" class="flex items-center gap-2 shrink-0">
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">✓ All Classes Covered</span>
               </div>
             </div>
 
@@ -1125,10 +1409,10 @@
                   <p class="text-xs text-slate-500">Real-time classroom sensor & teacher check-in status</p>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">🟢 Active</span>
-                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">⚪ Scheduled</span>
-                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded">🔴 Vacant</span>
-                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">🟡 Substitute</span>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Scheduled</span>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Vacant</span>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Substitute</span>
                 </div>
               </div>
 
@@ -1155,16 +1439,12 @@
           <!-- Other HOD tabs -->
           <div id="hod-tab-todays-timetable" class="hod-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h3 class="font-bold text-slate-900 text-base mb-2">Today's Schedule: IT Department</h3>
-              <p class="text-xs text-slate-500 mb-4">48 periods across 4 batches (IT-A, IT-B, IT-C, IT-D)</p>
-              <div class="space-y-2">
-                <div class="p-3 bg-slate-50 rounded-xl flex items-center justify-between text-xs">
-                  <span class="font-bold text-slate-800">10:00 - 11:00 AM Slot</span>
-                  <span class="text-slate-500">4 Classes Running • 1 Vacant (IT-C) • 1 Substitute (IT-D)</span>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl flex items-center justify-between text-xs">
-                  <span class="font-bold text-slate-800">11:00 - 12:00 PM Slot</span>
-                  <span class="text-slate-500">4 Classes Scheduled</span>
+              <h3 class="font-bold text-slate-900 text-base mb-2">Today's Schedule</h3>
+              <p class="text-xs text-slate-500 mb-4">Department timetable and active session slots</p>
+              <div id="hod-today-schedule-container" class="space-y-2">
+                <div class="py-8 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                  <p class="text-sm font-semibold text-slate-600">No scheduled periods for today</p>
+                  <p class="text-xs text-slate-400 mt-0.5">Classes will populate here once the campus timetable is generated and applied.</p>
                 </div>
               </div>
             </div>
@@ -1182,16 +1462,10 @@
                 </div>
               </div>
 
-              <div class="space-y-3">
-                <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/60 flex items-center justify-between">
-                  <div>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white">VACANT NOW</span>
-                    <h4 class="font-bold text-slate-900 text-sm mt-1">IT-C • Discrete Maths (Room C206)</h4>
-                    <p class="text-xs text-slate-600">Primary Faculty: Priya Sharma (On Casual Leave)</p>
-                  </div>
-                  <button onclick="openSubstituteModal(3)" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
-                    Assign Substitute
-                  </button>
+              <div id="hod-vacant-classes-container" class="space-y-3">
+                <div class="py-8 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                  <p class="text-sm font-semibold text-emerald-700">✓ No vacant classes currently</p>
+                  <p class="text-xs text-slate-400 mt-0.5">All scheduled classes have assigned faculty.</p>
                 </div>
               </div>
             </div>
@@ -1201,12 +1475,11 @@
             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
               <h3 class="font-bold text-slate-900 text-base mb-2">Substitute Teacher Ledger</h3>
               <p class="text-xs text-slate-500 mb-4">Historical and active substitution records</p>
-              <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/60 flex justify-between items-center text-xs">
-                <div>
-                  <span class="font-bold text-amber-900 text-sm">IT-D • Java (Room C207)</span>
-                  <p class="text-slate-600 mt-0.5">Original: Suresh | Substitute: <strong>Dr. Rajesh</strong></p>
+              <div id="hod-substitutes-container" class="space-y-3">
+                <div class="py-8 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                  <p class="text-sm font-semibold text-slate-600">No substitute records</p>
+                  <p class="text-xs text-slate-400 mt-0.5">Substitutions assigned during active sessions will appear here.</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full font-bold bg-amber-500 text-white text-xs">ACTIVE SUBSTITUTE</span>
               </div>
             </div>
           </div>
@@ -1234,11 +1507,11 @@
               <p class="text-xs text-slate-500 mb-4">Calculated from digital check-in records</p>
               <div class="grid grid-cols-3 gap-3 text-center text-xs">
                 <div class="p-3 bg-slate-50 rounded-xl">
-                  <div class="text-lg font-bold text-slate-800">92.4%</div>
+                  <div class="text-lg font-bold text-slate-800">--</div>
                   <div class="text-slate-500 mt-1">Punctuality Score</div>
                 </div>
                 <div class="p-3 bg-slate-50 rounded-xl">
-                  <div class="text-lg font-bold text-slate-800">98.1%</div>
+                  <div class="text-lg font-bold text-slate-800">--</div>
                   <div class="text-slate-500 mt-1">Class Coverage</div>
                 </div>
                 <div class="p-3 bg-slate-50 rounded-xl">
@@ -1256,7 +1529,7 @@
     <!-- ========================================================================= -->
     <!-- 3. TEACHER ROLE VIEW (DESKTOP DASHBOARD + MOBILE DRAWER ☰) -->
     <!-- ========================================================================= -->
-    <section id="section-teacher" class="role-section">
+    <section id="section-teacher" class="role-section max-w-7xl w-full mx-auto p-3 sm:p-6">
 
       <!-- MOBILE OFF-CANVAS SLIDE-OVER DRAWER (ACCESSED VIA 3-LINES HAMBURGER) -->
       <div id="teacher-mobile-drawer" class="fixed inset-0 z-50 drawer-closed lg:hidden">
@@ -1269,12 +1542,12 @@
             <!-- Drawer Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                  📱
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
                 </div>
                 <div>
                   <h3 class="font-bold text-slate-900 text-sm">Faculty Desk</h3>
-                  <span class="text-[11px] text-slate-500 block">Arun Kumar • Asst. Professor (IT)</span>
+                  <span id="teacher-drawer-user-dept" class="text-[11px] text-slate-500 block">Faculty Member</span>
                 </div>
               </div>
               <button onclick="closeTeacherDrawer()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
@@ -1315,7 +1588,7 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot"></span>
                 <span>Campus WiFi Verified</span>
               </div>
-              <p class="text-[11px] text-emerald-700">Connected to Block C Gateway (Room C204 within 20m radius)</p>
+              <p class="text-[11px] text-emerald-700">Connected to Campus Academic Gateway</p>
             </div>
           </div>
 
@@ -1339,7 +1612,7 @@
           </button>
           <div>
             <h3 class="font-bold text-slate-900 text-sm">Faculty Desk</h3>
-            <span class="text-[11px] text-slate-500">Arun Kumar • Tap ☰ to access desk menu</span>
+            <span id="teacher-topbar-user-dept" class="text-[11px] text-slate-500">Tap ☰ to access desk menu</span>
           </div>
         </div>
         <button onclick="handleTeacherCheckIn()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
@@ -1355,13 +1628,13 @@
         <aside class="w-full lg:w-64 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 shrink-0 hidden lg:block">
           <!-- Profile Badge -->
           <div class="flex items-center gap-3 p-3 bg-gradient-to-tr from-slate-900 to-indigo-950 text-white rounded-xl shadow-xs mb-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-sm font-black shadow-xs">
-              A
+            <div id="teacher-sidebar-avatar" class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-sm font-black shadow-xs">
+              F
             </div>
             <div>
-              <h3 class="font-bold text-sm leading-tight">Arun Kumar</h3>
-              <p class="text-[11px] text-indigo-200">Asst. Professor • IT</p>
-              <span class="text-[10px] text-emerald-400 font-mono">ID: #FAC-204</span>
+              <h3 id="teacher-sidebar-name" class="font-bold text-sm leading-tight">Faculty Member</h3>
+              <p id="teacher-sidebar-dept" class="text-[11px] text-indigo-200">Department Faculty</p>
+              <span id="teacher-sidebar-id" class="text-[10px] text-emerald-400 font-mono">Faculty Desk</span>
             </div>
           </div>
 
@@ -1380,7 +1653,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span>Today's Classes</span>
               </span>
-              <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">4</span>
+              <span id="teacher-sidebar-class-count" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">0</span>
             </a>
             <a href="javascript:void(0)" onclick="switchTeacherTab('timetable')" data-teacher-tab="timetable" class="teacher-sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -1403,9 +1676,9 @@
           <div class="mt-6 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
             <div class="flex items-center gap-2 text-emerald-800 font-bold">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot"></span>
-              <span>Room C204 Proximity</span>
+              <span>Classroom Sensor Proximity</span>
             </div>
-            <p class="text-[11px] text-slate-500">WiFi SSID: <strong>CAMPUS-ACADEMIC-C</strong> (Signal: -38 dBm)</p>
+            <p class="text-[11px] text-slate-500">WiFi SSID: <strong>CAMPUS-ACADEMIC</strong> (Active)</p>
             <div class="pt-1 text-[10px] text-indigo-700 font-semibold">✓ Ready for instant Check-In</div>
           </div>
         </aside>
@@ -1425,16 +1698,16 @@
                   </span>
                   <span class="text-xs text-indigo-200">Term: Odd Sem 2026-27</span>
                 </div>
-                <h2 class="text-2xl font-black mt-1 tracking-tight">Good Morning, Arun 👋</h2>
-                <p class="text-slate-300 text-xs mt-0.5">Assistant Professor, Department of Information Technology • Room C204</p>
+                <h2 id="teacher-greeting-name" class="text-2xl font-black mt-1 tracking-tight">Faculty Portal 👋</h2>
+                <p id="teacher-greeting-desc" class="text-slate-300 text-xs mt-0.5">Campus Teaching & Attendance Portal</p>
               </div>
 
               <!-- Quick Geo-Verified Pill -->
               <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-xs">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse-dot"></span>
                 <div>
-                  <span class="font-bold block">Academic Block C WiFi</span>
-                  <span class="text-[10px] text-indigo-200">Geo-fence Verified • Within 50m of C204</span>
+                  <span class="font-bold block">Campus Gateway WiFi</span>
+                  <span class="text-[10px] text-indigo-200">Geo-fence Verified • On-Campus Sensor Active</span>
                 </div>
               </div>
             </div>
@@ -1453,28 +1726,26 @@
                         <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse-dot"></span>
                         NEXT SCHEDULED CLASS
                       </span>
-                      <span id="teacher-next-class-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500 text-white flex items-center gap-1.5 shadow-sm">
-                        UPCOMING (10:00 AM)
+                      <span id="teacher-next-class-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-600 text-white flex items-center gap-1.5 shadow-sm">
+                        IDLE
                       </span>
                     </div>
 
                     <div>
-                      <div class="text-3xl sm:text-4xl font-mono font-extrabold tracking-tight text-white">10:00 - 11:00</div>
-                      <div class="text-3xl sm:text-4xl font-black tracking-tight mt-1 text-white">Python Programming</div>
-                      <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-indigo-200 font-medium">
-                        <span class="bg-white/15 px-3 py-1 rounded-xl border border-white/10 font-bold">Class: IT-A</span>
-                        <span class="bg-white/15 px-3 py-1 rounded-xl border border-white/10 font-mono">Room: C204 (Smart Hall)</span>
-                        <span>Capacity: 65 Students</span>
+                      <div id="teacher-focal-time" class="text-3xl sm:text-4xl font-mono font-extrabold tracking-tight text-white">--:--</div>
+                      <div id="teacher-focal-subject" class="text-2xl sm:text-3xl font-black tracking-tight mt-1 text-white">No Classes Scheduled</div>
+                      <div id="teacher-focal-details" class="flex flex-wrap items-center gap-3 mt-3 text-sm text-indigo-200 font-medium">
+                        <span class="bg-white/15 px-3 py-1 rounded-xl border border-white/10 font-bold">No active classes today</span>
                       </div>
                     </div>
 
                     <!-- Prominent Interactive Check-In Button -->
                     <div class="pt-2">
-                      <button id="teacher-checkin-action-btn" onclick="handleTeacherCheckIn()" class="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-extrabold text-base shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-3 transform active:scale-98 cursor-pointer">
+                      <button id="teacher-checkin-action-btn" onclick="handleTeacherCheckIn()" class="w-full py-4 px-6 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-2xl font-extrabold text-base shadow-md transition-all flex items-center justify-center gap-3 transform active:scale-98 cursor-pointer">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004 11a7.96 7.96 0 004.28 7.05"/></svg>
-                        <span>CHECK IN NOW</span>
+                        <span>NO ACTIVE CLASS</span>
                       </button>
-                      <p id="teacher-checkin-time" class="text-center text-xs text-indigo-300 mt-2 font-medium">Tap to check-in when entering Room C204 (Broadcasts to HOD Live Board)</p>
+                      <p id="teacher-checkin-time" class="text-center text-xs text-indigo-300 mt-2 font-medium">Class check-in will activate during your scheduled period</p>
                     </div>
                   </div>
 
@@ -1486,23 +1757,23 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
                     <span class="text-[11px] font-bold text-slate-400 uppercase">Today's Total</span>
-                    <div class="text-2xl font-black text-slate-900 mt-1">4 Classes</div>
-                    <span class="text-[10px] text-slate-500">3 Theory • 1 Lab</span>
+                    <div id="teacher-workload-total" class="text-2xl font-black text-slate-900 mt-1">0 Classes</div>
+                    <span class="text-[10px] text-slate-500">0 Theory • 0 Lab</span>
                   </div>
                   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
                     <span class="text-[11px] font-bold text-slate-400 uppercase">Completed</span>
-                    <div class="text-2xl font-black text-emerald-600 mt-1">1 Class</div>
-                    <span class="text-[10px] text-emerald-600 font-semibold">✓ DBMS IT-A</span>
+                    <div id="teacher-workload-completed" class="text-2xl font-black text-emerald-600 mt-1">0 Classes</div>
+                    <span class="text-[10px] text-slate-400">0 checked in</span>
                   </div>
                   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
                     <span class="text-[11px] font-bold text-slate-400 uppercase">Weekly Workload</span>
-                    <div class="text-2xl font-black text-indigo-700 mt-1">16 hrs</div>
-                    <span class="text-[10px] text-slate-500">Max limit: 18 hrs</span>
+                    <div id="teacher-workload-weekly" class="text-2xl font-black text-indigo-700 mt-1">0 hrs</div>
+                    <span class="text-[10px] text-slate-500">Weekly limit</span>
                   </div>
                   <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
                     <span class="text-[11px] font-bold text-slate-400 uppercase">Attendance Avg</span>
-                    <div class="text-2xl font-black text-slate-900 mt-1">96.7%</div>
-                    <span class="text-[10px] text-slate-500">58/60 avg present</span>
+                    <div id="teacher-workload-avg" class="text-2xl font-black text-slate-900 mt-1">--</div>
+                    <span class="text-[10px] text-slate-500">Class Attendance</span>
                   </div>
                 </div>
 
@@ -1516,9 +1787,9 @@
                   <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                       <h3 class="font-black text-base text-slate-900 tracking-tight">TODAY'S SCHEDULE</h3>
-                      <p class="text-xs text-slate-500">Friday • 4 Periods Scheduled</p>
+                      <p class="text-xs text-slate-500">Daily Academic Schedule</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700">4 Classes</span>
+                    <span id="teacher-schedule-count-pill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700">0 Classes</span>
                   </div>
 
                   <!-- Dynamic Timeline list -->
@@ -1527,7 +1798,7 @@
 
                 <!-- Classroom Smart Amenities Card -->
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-                  <h4 class="font-bold text-xs uppercase tracking-wider text-slate-400">Room C204 Smart Amenities</h4>
+                  <h4 id="teacher-room-amenities-title" class="font-bold text-xs uppercase tracking-wider text-slate-400">Classroom Smart Amenities</h4>
                   <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-2">
                       <span class="text-emerald-600 font-bold">✓</span>
@@ -1560,52 +1831,18 @@
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <h3 class="font-bold text-slate-900 text-lg">Today's Academic Schedule & Syllabi</h3>
-                  <p class="text-xs text-slate-500">Detailed overview of all classes assigned to Arun Kumar for today</p>
+                  <p class="text-xs text-slate-500">Detailed overview of assigned classes for today</p>
                 </div>
-                <button onclick="window.print()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-                  🖨 Print Daily Slip
+                <button onclick="window.print()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>Print Daily Slip</span>
                 </button>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="font-mono text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">09:00 - 10:00 AM</span>
-                    <span class="text-xs font-bold text-emerald-700">✓ COMPLETED</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-base">Database Management Systems (DBMS)</h4>
-                  <p class="text-xs text-slate-600">Batch: <strong>IT-A</strong> • Room: <strong>C205</strong> • Strength: 58/60 Attendance marked</p>
-                  <p class="text-xs text-slate-500 italic">Topic covered: Relational Algebra & Join Operations</p>
-                </div>
-
-                <div class="p-4 rounded-2xl border border-indigo-300 bg-indigo-50/40 space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="font-mono text-xs font-bold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded">10:00 - 11:00 AM</span>
-                    <span class="text-xs font-bold text-indigo-700">🟢 CURRENT SLOT</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-base">Python Programming & Scripting</h4>
-                  <p class="text-xs text-slate-600">Batch: <strong>IT-A</strong> • Room: <strong>C204</strong> • Enrolled: 60 Students</p>
-                  <p class="text-xs text-slate-500 italic">Topic: Object Oriented Classes, Inheritance & Polymorphism</p>
-                </div>
-
-                <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="font-mono text-xs font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded">11:00 - 12:00 PM</span>
-                    <span class="text-xs font-bold text-slate-500">⚪ UPCOMING</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-base">Discrete Mathematics Tutorial</h4>
-                  <p class="text-xs text-slate-600">Batch: <strong>IT-C</strong> • Room: <strong>C206</strong> • Enrolled: 62 Students</p>
-                  <p class="text-xs text-slate-500 italic">Topic: Graph Coloring & Hamiltonian Paths</p>
-                </div>
-
-                <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="font-mono text-xs font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded">12:00 - 01:00 PM</span>
-                    <span class="text-xs font-bold text-slate-500">⚪ UPCOMING</span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-base">Python Practical Lab (Batch-1)</h4>
-                  <p class="text-xs text-slate-600">Batch: <strong>IT-A</strong> • Lab: <strong>Lab 1 (Cloud Lab)</strong> • 30 Systems</p>
-                  <p class="text-xs text-slate-500 italic">Lab Assignment 4: Flask Microservices and SQLite Integration</p>
+              <div id="teacher-all-classes-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full py-12 text-center text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                  <p class="text-sm font-semibold text-slate-600">No assigned classes for today</p>
+                  <p class="text-xs text-slate-400 mt-1">Once periods are scheduled, syllabus details and room allocations will appear here.</p>
                 </div>
               </div>
             </div>
@@ -1617,73 +1854,20 @@
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <h3 class="font-bold text-slate-900 text-lg">My Weekly Teaching Matrix</h3>
-                  <p class="text-xs text-slate-500">Official schedule approved by Admin & HOD (v3.2)</p>
+                  <p class="text-xs text-slate-500">Official schedule approved by Admin & HOD</p>
                 </div>
-                <button onclick="window.print()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-                  🖨 Print Timetable
+                <button onclick="window.print()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>Print Timetable</span>
                 </button>
               </div>
 
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs text-center border-collapse border border-slate-200">
-                  <thead>
-                    <tr class="bg-slate-100 font-bold text-slate-700">
-                      <th class="border border-slate-200 p-2.5">Day</th>
-                      <th class="border border-slate-200 p-2.5">09:00 - 10:00</th>
-                      <th class="border border-slate-200 p-2.5">10:00 - 11:00</th>
-                      <th class="border border-slate-200 p-2.5">11:00 - 12:00</th>
-                      <th class="border border-slate-200 p-2.5">12:00 - 01:00</th>
-                      <th class="border border-slate-200 p-2.5">01:00 - 02:00</th>
-                      <th class="border border-slate-200 p-2.5">02:00 - 03:00</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="font-bold bg-slate-50 border border-slate-200 p-2.5">Monday</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free / Prep</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-A • C204</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-100 text-slate-400 font-bold">LUNCH</td>
-                      <td colspan="2" class="border border-slate-200 p-2.5 bg-purple-50 font-bold text-purple-900">Python Lab (2hr Block)<br><span class="text-[10px] text-slate-500">IT-A • Lab 1</span></td>
-                    </tr>
-                    <tr>
-                      <td class="font-bold bg-slate-50 border border-slate-200 p-2.5">Tuesday</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-B • C205</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-A • C204</span></td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-100 text-slate-400 font-bold">LUNCH</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Department Meeting</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Mentoring</td>
-                    </tr>
-                    <tr>
-                      <td class="font-bold bg-slate-50 border border-slate-200 p-2.5">Wednesday</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-A • C204</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                      <td class="border border-slate-200 p-2.5 bg-purple-50 font-bold text-purple-900">Python Lab<br><span class="text-[10px] text-slate-500">IT-B • Lab 2</span></td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-100 text-slate-400 font-bold">LUNCH</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Office Hours</td>
-                    </tr>
-                    <tr>
-                      <td class="font-bold bg-slate-50 border border-slate-200 p-2.5">Thursday</td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-A • C204</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Research Hours</td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-100 text-slate-400 font-bold">LUNCH</td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-50 font-bold text-indigo-900">Python<br><span class="text-[10px] text-slate-500">IT-B • C205</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Free</td>
-                    </tr>
-                    <tr class="bg-indigo-50/30 font-semibold">
-                      <td class="font-bold bg-indigo-100/60 border border-slate-200 p-2.5 text-indigo-900">Friday (Today)</td>
-                      <td class="border border-slate-200 p-2.5 bg-emerald-50 text-emerald-900 font-bold">DBMS (IT-A)<br><span class="text-[10px] text-emerald-700">✓ Done</span></td>
-                      <td class="border border-slate-200 p-2.5 bg-indigo-100 text-indigo-900 font-black">Python (IT-A)<br><span class="text-[10px] text-indigo-700">🟢 Current</span></td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-50 text-slate-700">Maths (IT-C)<br><span class="text-[10px] text-slate-500">Upcoming</span></td>
-                      <td class="border border-slate-200 p-2.5 bg-slate-100 text-slate-400 font-bold">LUNCH</td>
-                      <td class="border border-slate-200 p-2.5 bg-purple-50 text-purple-900">Lab (IT-A)<br><span class="text-[10px] text-slate-500">Upcoming</span></td>
-                      <td class="border border-slate-200 p-2.5 text-slate-400">Sports / Clubs</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div id="teacher-timetable-container" class="overflow-x-auto">
+                <div class="py-12 text-center text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                  <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <p class="text-sm font-semibold text-slate-600">No weekly timetable assigned yet</p>
+                  <p class="text-xs text-slate-400 mt-1">Your official schedule will appear once published campus-wide.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1692,25 +1876,25 @@
           <div id="teacher-tab-checkin" class="teacher-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs max-w-xl mx-auto text-center space-y-4">
               <div class="w-16 h-16 rounded-3xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-2xl shadow-sm border border-indigo-100">
-                📍
+                <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <div>
                 <h3 class="text-xl font-black text-slate-900">Classroom Check-In Terminal</h3>
-                <p class="text-xs text-slate-500">Room C204 • Academic Block C Gateway</p>
+                <p id="teacher-terminal-subtitle" class="text-xs text-slate-500">Classroom Sensor Gateway</p>
               </div>
 
               <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-left space-y-2">
                 <div class="flex justify-between">
                   <span class="text-slate-500">Target Classroom:</span>
-                  <span class="font-bold text-slate-800">Room C204 (Lecture Hall)</span>
+                  <span id="teacher-terminal-target-room" class="font-bold text-slate-800">Assigned Classroom</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-slate-500">WiFi SSID Detected:</span>
-                  <span class="font-mono font-bold text-emerald-700">CAMPUS-ACADEMIC-C</span>
+                  <span class="font-mono font-bold text-emerald-700">CAMPUS-ACADEMIC</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-slate-500">Proximity Radius:</span>
-                  <span class="font-bold text-emerald-700">12 meters (Within Boundary)</span>
+                  <span class="font-bold text-emerald-700">Within Campus Boundary</span>
                 </div>
               </div>
 
@@ -1724,20 +1908,10 @@
           <div id="teacher-tab-history" class="teacher-tab-pane hidden space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
               <h3 class="font-bold text-slate-900 text-lg">Check-In Audit & Attendance Logs</h3>
-              <div class="space-y-2">
-                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="font-bold text-slate-800 text-sm">DBMS • IT-A (Room C205)</span>
-                    <p class="text-slate-500">Checked In: 08:58 AM • Checked Out: 09:55 AM • Students: 58/60</p>
-                  </div>
-                  <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">Punctual (100%)</span>
-                </div>
-                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="font-bold text-slate-800 text-sm">Python Lab • IT-A (Lab 1) - Yesterday</span>
-                    <p class="text-slate-500">Checked In: 01:57 PM • Checked Out: 03:50 PM • Students: 60/60</p>
-                  </div>
-                  <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">Completed</span>
+              <div id="teacher-history-container" class="space-y-2">
+                <div class="py-8 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                  <p class="text-sm font-semibold text-slate-600">No attendance logs found</p>
+                  <p class="text-xs text-slate-400 mt-0.5">Logs will automatically record when you check into assigned classrooms.</p>
                 </div>
               </div>
             </div>
@@ -1761,8 +1935,8 @@
       <div class="flex items-start justify-between border-b border-slate-100 pb-4 mb-4">
         <div>
           <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">Vacant Class Substitution</span>
-          <h3 id="sub-modal-class-name" class="text-xl font-bold text-slate-900 mt-1">IT-C - Maths</h3>
-          <p class="text-xs text-slate-500">Room <span id="sub-modal-room" class="font-mono font-bold">C206</span> • Slot: <span id="sub-modal-time">10:00 - 11:00</span></p>
+          <h3 id="sub-modal-class-name" class="text-xl font-bold text-slate-900 mt-1">--</h3>
+          <p class="text-xs text-slate-500">Room <span id="sub-modal-room" class="font-mono font-bold">--</span> • Slot: <span id="sub-modal-time">--</span></p>
         </div>
         <button onclick="closeSubstituteModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1771,7 +1945,7 @@
 
       <div class="p-3 bg-slate-50 rounded-xl mb-4 text-xs text-slate-600 flex items-center justify-between">
         <span>Scheduled Teacher:</span>
-        <span id="sub-modal-teacher-name" class="font-bold text-rose-700">Priya (On Leave)</span>
+        <span id="sub-modal-teacher-name" class="font-bold text-rose-700">--</span>
       </div>
 
       <div class="space-y-3">
@@ -1803,7 +1977,7 @@
       <form id="form-add-hod" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Full Name & Title</label>
-          <input id="new-hod-name" type="text" placeholder="e.g. Dr. K. Balasubramanian" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+          <input id="new-hod-name" type="text" placeholder="Enter full name and title" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Department</label>
@@ -1816,11 +1990,11 @@
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">HOD Login Gmail</label>
-          <input id="new-hod-email" type="email" placeholder="e.g. balasubramanian.hod@gmail.com" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
+          <input id="new-hod-email" type="email" placeholder="Enter HOD login Gmail" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Set Account Password</label>
-          <input id="new-hod-password" type="text" placeholder="e.g. HODpass2026!#" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
+          <input id="new-hod-password" type="text" placeholder="Enter account password" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
           <p class="text-[10px] text-slate-400 mt-0.5">The HOD will use this password to sign into their live monitoring desk.</p>
         </div>
         <div>
@@ -1836,13 +2010,13 @@
     </div>
   </div>
 
-  <!-- 3. HOD ADDS TEACHER WITH GMAIL & PASSWORD MODAL -->
+  <!-- 3. HOD / ADMIN ADDS TEACHER WITH GMAIL & PASSWORD MODAL -->
   <div id="modal-hod-add-teacher" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 animate-in fade-in zoom-in duration-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
         <div>
           <h3 class="text-lg font-bold text-slate-900">Add Faculty Teacher</h3>
-          <p class="text-xs text-slate-500">HOD sets Gmail & Password for teacher PWA check-in</p>
+          <p class="text-xs text-slate-500">Set Gmail & Password for teacher PWA check-in</p>
         </div>
         <button onclick="closeModal('modal-hod-add-teacher')" class="text-slate-400 hover:text-slate-600 p-1">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1852,29 +2026,29 @@
       <form id="form-hod-add-teacher" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Teacher Name</label>
-          <input id="hod-teacher-name" type="text" placeholder="e.g. Prof. Priya Raman" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+          <input id="hod-teacher-name" type="text" placeholder="Enter faculty name" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Subject Specialization</label>
-          <input id="hod-teacher-subject" type="text" placeholder="e.g. Discrete Mathematics" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+          <input id="hod-teacher-subject" type="text" placeholder="Enter subject specialization" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Teacher Gmail Address</label>
-          <input id="hod-teacher-email" type="email" placeholder="e.g. priya.raman@gmail.com" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
+          <input id="hod-teacher-email" type="email" placeholder="Enter faculty Gmail" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Set Teacher Password</label>
-          <input id="hod-teacher-password" type="text" placeholder="e.g. TeacherPass2026" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
+          <input id="hod-teacher-password" type="text" placeholder="Enter faculty password" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
           <p class="text-[10px] text-slate-400 mt-0.5">The teacher will use this password to sign into their mobile PWA check-in app.</p>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Department</label>
-            <input id="hod-teacher-dept" type="text" value="IT" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+            <input id="hod-teacher-dept" type="text" placeholder="e.g. IT, CSE, ECE" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Workload Cap</label>
-            <input id="hod-teacher-workload" type="text" value="16 hrs/wk" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+            <input id="hod-teacher-workload" type="text" placeholder="e.g. 16 hrs/wk" value="16 hrs/wk" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
           </div>
         </div>
 
@@ -1886,7 +2060,269 @@
     </div>
   </div>
 
+  <!-- 4. ADMIN ADDS SUBJECT MODAL -->
+  <div id="modal-add-subject" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Add Curriculum Subject</h3>
+          <p class="text-xs text-slate-500">Register course subject, code & weekly hours</p>
+        </div>
+        <button onclick="closeModal('modal-add-subject')" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-add-subject" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Subject Code</label>
+            <input id="new-subject-code" type="text" placeholder="e.g. CS201" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono font-bold uppercase">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Weekly Hours</label>
+            <input id="new-subject-hours" type="number" min="1" max="20" value="4" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Subject Name</label>
+          <input id="new-subject-name" type="text" placeholder="e.g. Data Structures & Algorithms" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Course Type</label>
+            <select id="new-subject-type" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-medium">
+              <option value="Core Theory">Core Theory</option>
+              <option value="Practical Lab">Practical Lab</option>
+              <option value="Elective Theory">Elective Theory</option>
+              <option value="Project / Seminar">Project / Seminar</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Department</label>
+            <select id="new-subject-dept" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-medium">
+              <option value="IT">Information Tech (IT)</option>
+              <option value="CSE">Computer Science (CSE)</option>
+              <option value="ECE">Electronics (ECE)</option>
+              <option value="MECH">Mechanical (MECH)</option>
+              <option value="General">General / Common</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-add-subject')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md">Register Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. ADMIN ADDS CLASS BATCH MODAL -->
+  <div id="modal-add-class" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Add Academic Class / Batch</h3>
+          <p class="text-xs text-slate-500">Register student cohort & designated classroom</p>
+        </div>
+        <button onclick="closeModal('modal-add-class')" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-add-class" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Class / Section Identifier</label>
+          <input id="new-class-name" type="text" placeholder="e.g. IT-A, CSE-B, MECH-1" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-bold uppercase">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Student Strength</label>
+            <input id="new-class-students" type="number" min="1" max="300" value="60" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Designated Room</label>
+            <input id="new-class-room" type="text" placeholder="e.g. C201" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono">
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-add-class')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md">Add Class Batch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. ADMIN ADDS CLASSROOM / LAB MODAL -->
+  <div id="modal-add-classroom" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Add Classroom / Lab</h3>
+          <p class="text-xs text-slate-500">Register campus lecture hall or computing facility</p>
+        </div>
+        <button onclick="closeModal('modal-add-classroom')" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-add-classroom" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Room / Hall Number</label>
+          <input id="new-classroom-room" type="text" placeholder="e.g. C204, LH-1, Lab-4" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Facility Type</label>
+            <select id="new-classroom-type" class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-medium">
+              <option value="Smart Classroom">Smart Classroom</option>
+              <option value="Lecture Hall">Lecture Hall</option>
+              <option value="Computing Lab">Computing Lab</option>
+              <option value="Seminar Hall">Seminar Hall</option>
+              <option value="Workshop / Studio">Workshop / Studio</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Seating Capacity</label>
+            <input id="new-classroom-capacity" type="number" min="10" max="1000" value="65" required class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 font-bold">
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-add-classroom')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md">Register Classroom</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. AI TIMETABLE STUDIO: EDIT / REASSIGN PERIOD MODAL -->
+  <div id="modal-ai-edit-slot" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden" onclick="if(event.target===this) aiCloseEditModal()">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 space-y-4 animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900" id="aiEditModalTitle">Edit Period Slot</h3>
+          <p class="text-xs text-slate-500" id="aiEditModalSubtitle">Assign subject and staff</p>
+        </div>
+        <button onclick="aiCloseEditModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Select Subject</label>
+          <select id="aiEditSelectSubject" onchange="aiOnEditSubjectChanged()" class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Faculty Name</label>
+          <input type="text" id="aiEditStaffName" class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+          <div>
+            <label class="font-bold text-slate-800 block">Practical / Lab Session</label>
+            <p class="text-[11px] text-slate-500">Marks slot as continuous laboratory block</p>
+          </div>
+          <input type="checkbox" id="aiEditIsLab" class="w-4 h-4 text-indigo-600 rounded">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button onclick="aiSaveSlotEdit()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">
+            Save Changes
+          </button>
+          <button onclick="aiClearSlot()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl border border-rose-200 transition">
+            Clear Slot (-)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. AI TIMETABLE STUDIO: ADD SUBJECT MODAL -->
+  <div id="modal-ai-add-subject" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden" onclick="if(event.target===this) aiCloseAddSubjectModal()">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 space-y-4 animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Add Curriculum Subject</h3>
+          <p class="text-xs text-slate-500">Define course code, faculty and weekly hours</p>
+        </div>
+        <button onclick="aiCloseAddSubjectModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-ai-add-subject" onsubmit="aiHandleAddSubjectSubmit(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Subject Code</label>
+            <input type="text" id="aiNewSubCode" placeholder="e.g. CS25C09" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold uppercase focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Subject Title</label>
+            <input type="text" id="aiNewSubName" placeholder="e.g. OPERATING SYSTEMS" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Faculty Name & Designation</label>
+          <input type="text" id="aiNewSubStaff" placeholder="e.g. MR.K.RAMESH, AP/IT" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Lecture (L)</label>
+            <input type="number" id="aiNewSubL" value="3" min="0" max="10" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tutorial (T)</label>
+            <input type="number" id="aiNewSubT" value="0" min="0" max="10" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Practical (P)</label>
+            <input type="number" id="aiNewSubP" value="0" min="0" max="10" required class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-bold focus:bg-white outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Continuous Lab Block Size (If Lab > 0)</label>
+          <select id="aiNewSubBlockSize" class="w-full border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 font-medium">
+            <option value="2">2 Periods Contiguous Block</option>
+            <option value="3" selected>3 Periods Contiguous Block</option>
+            <option value="1">1 Period (No block)</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="aiCloseAddSubjectModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md">Add to Curriculum</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. AI TIMETABLE STUDIO: FULLSCREEN ZOOM MODAL -->
+  <div id="modal-ai-image-zoom" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 hidden" onclick="if(event.target===this) aiCloseImageModal()">
+    <div class="absolute top-4 right-4 flex items-center gap-3 z-10">
+      <a href="/api/image" download="SCAD_Timetable_300DPI.png" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-white/20">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span>Download PNG</span>
+      </a>
+      <button onclick="aiCloseImageModal()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="max-w-5xl max-h-[90vh] overflow-auto rounded-2xl shadow-2xl border border-white/10 p-2 bg-slate-900/50">
+      <img id="aiZoomImg" src="/api/image" alt="Official SCAD Timetable Document Zoom" class="w-auto h-auto max-h-[85vh] object-contain rounded-xl cursor-zoom-in transition-transform duration-200" onclick="aiToggleZoom(this)">
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="app.js"></script>
+  <script src="app.js?v=light_nav"></script>
 </body>
 </html>

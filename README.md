@@ -8,10 +8,11 @@ Automated college timetable generator, departmental live attendance monitoring, 
 
 The login screen supports auto-role routing based on the registered Gmail address:
 
-| Role | Login Gmail | Password | Access Rights |
+| Role | Login ID / Email | Password | Access Rights |
 |---|---|---|---|
-| **👨💼 Admin (Default)** | `canvaonly322@gmail.com`<br>*(also `canvaonly322@gmil.com`)* | `123BALASELVARAJA123` | Master control: Generates timetables, sets campus rules, **provisions HOD accounts with Gmail & password**. |
-| **👨🏫 HOD (IT Dept)** | `hod.it@college.edu` | `hodpassword123` | Department control: Live monitoring, vacant class substitution, **provisions Teacher accounts with Gmail & password**. |
+| **👨💼 Admin (Hulk)** | `hulk@pluto.in` | `HULK@123` | Master control: Full campus administrative privileges. |
+| **👨💼 Admin (System)** | `canvaonly322@gmail.com` | `123BALASELVARAJA123` | Master control: Generates timetables, sets campus rules, **provisions HOD accounts**. |
+| **👨🏫 HOD (IT Dept)** | `hod.it@college.edu` | `hodpassword123` | Department control: Live monitoring, vacant class substitution, **provisions Teacher accounts**. |
 | **📱 Teacher (Arun)** | `arun@college.edu` | `teacherpass123` | Mobile PWA check-in: View daily schedule, 1-tap class check-in to activate live classroom status. |
 
 > **Tip**: The login page includes **1-Click Quick Login buttons** for instant testing without typing.
@@ -53,18 +54,22 @@ The login screen supports auto-role routing based on the registered Gmail addres
   - `11:00` Maths IT-C Upcoming
   - `12:00` Lab IT-A Upcoming
 
+### 4. 🤖 AI Timetable Studio & Document Generator
+- **Autonomous Scheduling Engine**: Constraint satisfaction solver respecting 2-3 period contiguous lab blocks, theory distribution, and faculty workloads.
+- **1-Tap Period Swapping**: Click any period cell (turns amber) and tap any second cell to swap them instantly with live conflict checking.
+- **Official SCAD College Document Engine**: Generates publication-grade 300 DPI SSAA A4 document images (`timetable.png`) and vector printable PDFs (`timetable.html`).
+- **Campus-Wide Publishing**: 1-click apply button pushes the newly generated timetable to the active schedule across Admin, HOD, and Teacher portals.
+
 ---
 
-## 🚀 How to Run
+## 🚀 How to Run Locally
 
-### Direct in Browser (No Server Needed)
+### Start Local Server
 ```bash
-open /Users/sairam/Documents/mymonıterxx/index.html
+python server.py
 ```
-
-### Via Local Python Server
-```bash
-cd /Users/sairam/Documents/mymonıterxx
-python3 -m http.server 3000
-```
-Then visit **`http://localhost:3000`** in your browser.
+Then visit:
+- **Main Portal**: `http://localhost:3000`
+- **Dedicated AI Timetable Studio**: `http://localhost:3000/ai_timetable_studio.html`
+- **Official 300 DPI Document Image**: `http://localhost:3000/api/image`
+- **Vector PDF / Print View**: `http://localhost:3000/api/html`
